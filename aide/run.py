@@ -2,6 +2,7 @@ import atexit
 import logging
 import shutil
 import sys
+import time
 
 from . import backend
 
@@ -91,6 +92,8 @@ def journal_to_string_tree(journal: Journal) -> str:
 
 def run():
     cfg = load_cfg()
+    print('Imprimimos la configuracion')
+    print(cfg)
     log_format = "[%(asctime)s] %(levelname)s: %(message)s"
     logging.basicConfig(
         level=getattr(logging, cfg.log_level.upper()), format=log_format, handlers=[]
@@ -196,6 +199,7 @@ def run():
             logger.info(journal_to_string_tree(journal))
         save_run(cfg, journal)
         global_step = len(journal)
+        time.sleep(10)
     interpreter.cleanup_session()
 
 

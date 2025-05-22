@@ -12,6 +12,7 @@ from .utils import data_preview
 from .utils.config import Config
 from .utils.metric import MetricValue, WorstMetricValue
 from .utils.response import extract_code, extract_text_up_to_code, wrap_code
+from .utils.prompt_loader import load_prompts
 
 logger = logging.getLogger("aide")
 
@@ -82,6 +83,7 @@ class Agent:
         self.data_preview: str | None = None
         self.start_time = time.time()
         self.current_step = 0
+        self.prompts = load_prompts(cfg.prompts_path if hasattr(cfg, "prompts_path") else "prompts.txt")
 
     def search_policy(self) -> Node | None:
         """Select a node to work on (or None to draft a new node)."""
@@ -118,24 +120,14 @@ class Agent:
 
     @property
     def _prompt_environment(self):
-        pkgs = [
-            "numpy",
-            "pandas",
-            "scikit-learn",
-            "statsmodels",
-            "xgboost",
-            "lightGBM",
-            "torch",
-            "torchvision",
-            "torch-geometric",
-            "bayesian-optimization",
-            "timm",
-        ]
+        # Carga la lista de paquetes y el prompt desde prompts.txt
+        pkgs = [p.strip() for p in self.prompts["ENV_PKGS"].splitlines() if p.strip()]
         random.shuffle(pkgs)
         pkg_str = ", ".join([f"`{p}`" for p in pkgs])
 
+        env_prompt_text = self.prompts["ENV_PROMPT"].format(PKG_LIST=pkg_str)
         env_prompt = {
-            "Installed Packages": f"Your solution can use any relevant machine learning packages such as: {pkg_str}. Feel free to use any other packages too (all packages are already installed!). For neural networks we suggest using PyTorch rather than TensorFlow."
+            "Installed Packages": env_prompt_text
         }
         return env_prompt
 
@@ -145,30 +137,24 @@ class Agent:
         tot_time_remaining = self.acfg.time_limit - tot_time_elapsed
         exec_timeout = int(min(self.cfg.exec.timeout, tot_time_remaining))
 
-        impl_guideline = [
-            f"<TOTAL_TIME_REMAINING: {format_time(tot_time_remaining)}>",
-            f"<TOTAL_STEPS_REMAINING: {self.acfg.steps - self.current_step}>",
-            "The code should **implement the proposed solution**, **print the value of the evaluation metric computed on a hold-out validation set**,",
-            "**AND MOST IMPORTANTLY SAVE PREDICTIONS ON THE PROVIDED UNLABELED TEST DATA IN A `submission.csv` FILE IN THE ./submission/ DIRECTORY.**",
-            "The code should be a single-file python program that is self-contained and can be executed as-is.",
-            "No parts of the code should be skipped, don't terminate the before finishing the script.",
-            "Your response should only contain a single code block.",
-            f"Be aware of the running time of the code, it should complete within {humanize.naturaldelta(exec_timeout)}.",
-            'All the provided input data is stored in "./input" directory.',
-            '**You MUST submit predictions on the provided unlabeled test data in a `submission.csv` file** file in the "./working" directory as described in the task description** This is extremely important since this file is used for grading/evaluation. DO NOT FORGET THE submission.csv file!',
-            'You can also use the "./working" directory to store any temporary files that your code needs to create.',
-            "REMEMBER THE ./submission/submission.csv FILE!!!!! The correct directory is important too.",
-        ]
+        # Carga el template desde prompts.txt
+        impl_guideline_template = self.prompts["IMPL_GUIDELINE"]
+
+        # Formatea los valores dinámicos
+        impl_guideline = impl_guideline_template.format(
+            TOTAL_TIME_REMAINING=format_time(tot_time_remaining),
+            TOTAL_STEPS_REMAINING=self.acfg.steps - self.current_step,
+            EXEC_TIMEOUT=humanize.naturaldelta(exec_timeout),
+        ).splitlines()
+
         if self.acfg.expose_prediction:
-            impl_guideline.append(
-                "The implementation should include a predict() function, "
-                "allowing users to seamlessly reuse the code to make predictions on new data. "
-                "The prediction function should be well-documented, especially the function signature."
-            )
+            impl_guideline.append(self.prompts["IMPL_GUIDELINE_APPEND_PREDICT"])
 
         if self.acfg.k_fold_validation > 1:
             impl_guideline.append(
-                f"The evaluation should be based on {self.acfg.k_fold_validation}-fold cross-validation but only if that's an appropriate evaluation for the task at hand."
+                self.prompts["IMPL_GUIDELINE_APPEND_KFOLD"].format(
+                    K_FOLD=self.acfg.k_fold_validation
+                )
             )
 
         return {"Implementation guideline": impl_guideline}
@@ -176,11 +162,7 @@ class Agent:
     @property
     def _prompt_resp_fmt(self):
         return {
-            "Response format": (
-                "Your response should be a brief outline/sketch of your proposed solution in natural language (3-5 sentences), "
-                "followed by a single markdown code block (wrapped in ```) which implements this solution and prints out the evaluation metric. "
-                "There should be no additional headings or text in your response. Just natural language text followed by a newline and then the markdown code block. "
-            )
+            "Response format": self.prompts["RESPONSE_FORMAT"]
         }
 
     def plan_and_code_query(self, prompt, retries=3) -> tuple[str, str]:
@@ -208,16 +190,10 @@ class Agent:
 
     def _draft(self) -> Node:
         introduction = (
-            "You are a Kaggle grandmaster attending a competition. "
-            "In order to win this competition, you need to come up with an excellent and creative plan "
-            "for a solution and then implement this solution in Python. We will now provide a description of the task."
+            self.prompts["DRAFT_INTRO_OBFUSCATED"]
+            if self.acfg.obfuscate
+            else self.prompts["DRAFT_INTRO"]
         )
-        if self.acfg.obfuscate:
-            introduction = (
-                "You are an expert machine learning engineer attempting a task. "
-                "In order to complete this task, you need to come up with an excellent and creative plan "
-                "for a solution and then implement this solution in Python. We will now provide a description of the task."
-            )
         prompt: Any = {
             "Introduction": introduction,
             "Task description": self.task_desc,
@@ -226,15 +202,7 @@ class Agent:
         }
         prompt["Instructions"] |= self._prompt_resp_fmt
         prompt["Instructions"] |= {
-            "Solution sketch guideline": [
-                "This first solution design should be relatively simple, without ensembling or hyper-parameter optimization.",
-                "Take the Memory section into consideration when proposing the design,"
-                " don't propose the same modelling solution but keep the evaluation the same.",
-                "The solution sketch should be 3-5 sentences.",
-                "Propose an evaluation metric that is reasonable for this task.",
-                "Don't suggest to do EDA.",
-                "The data is already prepared and available in the `./input` directory. There is no need to unzip any files.",
-            ],
+            "Solution sketch guideline": self.prompts["SOLUTION_SKETCH_GUIDELINE"].splitlines(),
         }
         prompt["Instructions"] |= self._prompt_impl_guideline
         prompt["Instructions"] |= self._prompt_environment
@@ -249,18 +217,10 @@ class Agent:
 
     def _improve(self, parent_node: Node) -> Node:
         introduction = (
-            "You are a Kaggle grandmaster attending a competition. You are provided with a previously developed "
-            "solution below and should improve it in order to further increase the (test time) performance. "
-            "For this you should first outline a brief plan in natural language for how the solution can be improved and "
-            "then implement this improvement in Python based on the provided previous solution. "
+            self.prompts["IMPROVE_INTRO_OBFUSCATED"]
+            if self.acfg.obfuscate
+            else self.prompts["IMPROVE_INTRO"]
         )
-        if self.acfg.obfuscate:
-            introduction = (
-                "You are an expert machine learning engineer attempting a task. You are provided with a previously developed "
-                "solution below and should improve it in order to further increase the (test time) performance. "
-                "For this you should first outline a brief plan in natural language for how the solution can be improved and "
-                "then implement this improvement in Python based on the provided previous solution. "
-            )
         prompt: Any = {
             "Introduction": introduction,
             "Task description": self.task_desc,
@@ -273,14 +233,7 @@ class Agent:
 
         prompt["Instructions"] |= self._prompt_resp_fmt
         prompt["Instructions"] |= {
-            "Solution improvement sketch guideline": [
-                "The solution sketch should be a brief natural language description of how the previous solution can be improved.",
-                "You should be very specific and should only propose a single actionable improvement.",
-                "This improvement should be atomic so that we can experimentally evaluate the effect of the proposed change.",
-                "Take the Memory section into consideration when proposing the improvement.",
-                "The solution sketch should be 3-5 sentences.",
-                "Don't suggest to do EDA.",
-            ],
+            "Solution improvement sketch guideline": self.prompts["SOLUTION_IMPROVEMENT_SKETCH_GUIDELINE"].splitlines(),
         }
         prompt["Instructions"] |= self._prompt_impl_guideline
 
@@ -291,20 +244,10 @@ class Agent:
 
     def _debug(self, parent_node: Node) -> Node:
         introduction = (
-            "You are a Kaggle grandmaster attending a competition. "
-            "Your previous solution had a bug and/or did not produce a submission.csv, "
-            "so based on the information below, you should revise it in order to fix this. "
-            "Your response should be an implementation outline in natural language,"
-            " followed by a single markdown code block which implements the bugfix/solution."
+            self.prompts["DEBUG_INTRO_OBFUSCATED"]
+            if self.acfg.obfuscate
+            else self.prompts["DEBUG_INTRO"]
         )
-        if self.acfg.obfuscate:
-            introduction = (
-                "You are an expert machine learning engineer attempting a task. "
-                "Your previous solution had a bug and/or did not produce a submission.csv, "
-                "so based on the information below, you should revise it in order to fix this. "
-                "Your response should be an implementation outline in natural language,"
-                " followed by a single markdown code block which implements the bugfix/solution."
-            )
         prompt: Any = {
             "Introduction": introduction,
             "Task description": self.task_desc,
@@ -314,10 +257,7 @@ class Agent:
         }
         prompt["Instructions"] |= self._prompt_resp_fmt
         prompt["Instructions"] |= {
-            "Bugfix improvement sketch guideline": [
-                "You should write a brief natural language description (3-5 sentences) of how the issue in the previous implementation can be fixed.",
-                "Don't suggest to do EDA.",
-            ],
+             "Bugfix improvement sketch guideline": self.prompts["BUGFIX_IMPROVEMENT_SKETCH_GUIDELINE"].splitlines(),
         }
         prompt["Instructions"] |= self._prompt_impl_guideline
 
@@ -398,16 +338,10 @@ class Agent:
         node.absorb_exec_result(exec_result)
 
         introduction = (
-            "You are a Kaggle grandmaster attending a competition. "
-            "You have written code to solve this task and now need to evaluate the output of the code execution. "
-            "You should determine if there were any bugs as well as report the empirical findings."
+            self.prompts["PARSE_EXEC_INTRO_OBFUSCATED"]
+            if self.acfg.obfuscate
+            else self.prompts["PARSE_EXEC_INTRO"]
         )
-        if self.acfg.obfuscate:
-            introduction = (
-                "You are an expert machine learning engineer attempting a task. "
-                "You have written code to solve this task and now need to evaluate the output of the code execution. "
-                "You should determine if there were any bugs as well as report the empirical findings."
-            )
         prompt = {
             "Introduction": introduction,
             "Task description": self.task_desc,

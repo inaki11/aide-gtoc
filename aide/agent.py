@@ -83,7 +83,7 @@ class Agent:
         self.data_preview: str | None = None
         self.start_time = time.time()
         self.current_step = 0
-        self.prompts = load_prompts(cfg.prompts_path if hasattr(cfg, "prompts_path") else "prompts.txt")
+        self.prompts = load_prompts()
 
     def search_policy(self) -> Node | None:
         """Select a node to work on (or None to draft a new node)."""

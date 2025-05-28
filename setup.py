@@ -24,7 +24,7 @@ setup(
             "example_tasks/bitcoin_price/*",
             "example_tasks/house_prices/*",
             "example_tasks/*",
-            "aide/prompts.txt"
+            "prompts.txt"
         ]
     },
     classifiers=[

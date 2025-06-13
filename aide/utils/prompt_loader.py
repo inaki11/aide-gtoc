@@ -1,4 +1,6 @@
-def load_prompts(filepath="prompts.txt"):
+from importlib.resources import files
+
+def load_prompts(filepath= files("aide").joinpath("prompts.txt")):
     prompts = {}
     current_key = None
     current_lines = []

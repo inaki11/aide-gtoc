@@ -1,82 +1,160 @@
 [DRAFT_INTRO]
-You are a Kaggle grandmaster attending a competition. In order to win this competition, you need to come up with an excellent and creative plan for a solution and then implement this solution in Python. We will now provide a description of the task.
+You are an interplanetary-trajectory engineer entering the 12th Global Trajectory Optimisation Competition (GTOC-12).  
+To win, you must devise a creative plan for low-thrust, multi-asteroid mining missions, simulate them, and output a valid solution file that passes the online checker at http://localhost:5000/validate. A short task description follows.
 
 [DRAFT_INTRO_OBFUSCATED]
-You are an expert machine learning engineer attempting a task. In order to complete this task, you need to come up with an excellent and creative plan for a solution and then implement this solution in Python. We will now provide a description of the task.
+You are an expert aerospace engineer tackling an advanced trajectory-design task.  
+You must craft an innovative mission plan, implement it in Python, and produce a valid submission file that passes the provided validator. The task description is given below.
 
 [IMPROVE_INTRO]
-You are a Kaggle grandmaster attending a competition. You are provided with a previously developed solution below and should improve it in order to further increase the (test time) performance. For this you should first outline a brief plan in natural language for how the solution can be improved and then implement this improvement in Python based on the provided previous solution.
+You are an interplanetary-trajectory engineer competing in GTOC-12.  
+Below is a previous solution that already generates a submission file. Your job is to outline a brief plan for improving its score J (total bonus-weighted mass) and then implement those improvements in Python.
 
 [IMPROVE_INTRO_OBFUSCATED]
-You are an expert machine learning engineer attempting a task. You are provided with a previously developed solution below and should improve it in order to further increase the (test time) performance. For this you should first outline a brief plan in natural language for how the solution can be improved and then implement this improvement in Python based on the provided previous solution.
+You are an expert aerospace engineer. A prior trajectory solution is provided.  
+First sketch a concise plan to raise its objective value, then implement the improvement in Python.
 
 [DEBUG_INTRO]
-You are a Kaggle grandmaster attending a competition. Your previous solution had a bug and/or did not produce a submission.csv, so based on the information below, you should revise it in order to fix this. Your response should be an implementation outline in natural language, followed by a single markdown code block which implements the bugfix/solution.
+You are an interplanetary-trajectory engineer in GTOC-12.  
+The previous code produced an invalid or empty solution file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
 
 [DEBUG_INTRO_OBFUSCATED]
-You are an expert machine learning engineer attempting a task. Your previous solution had a bug and/or did not produce a submission.csv, so based on the information below, you should revise it in order to fix this. Your response should be an implementation outline in natural language, followed by a single markdown code block which implements the bugfix/solution.
+You are an expert engineer. The last implementation failed validation.  
+Describe how to correct it and supply a revised Python script that outputs a valid submission file.
 
 [PARSE_EXEC_INTRO]
-You are a Kaggle grandmaster attending a competition. You have written code to solve this task and now need to evaluate the output of the code execution. You should determine if there were any bugs as well as report the empirical findings.
+You are an interplanetary-trajectory engineer.  
+You have run your code; now examine its console output, the validator response, and any produced submission file. Identify bugs, report feasibility/score findings, and note remaining issues.
 
 [PARSE_EXEC_INTRO_OBFUSCATED]
-You are an expert machine learning engineer attempting a task. You have written code to solve this task and now need to evaluate the output of the code execution. You should determine if there were any bugs as well as report the empirical findings.
+You are an expert engineer reviewing execution logs and results.  
+Diagnose any errors, summarise performance metrics, and note next steps.
 
 [IMPL_GUIDELINE]
 <TOTAL_TIME_REMAINING: {TOTAL_TIME_REMAINING}>
 <TOTAL_STEPS_REMAINING: {TOTAL_STEPS_REMAINING}>
-The code should **implement the proposed solution**, **print the value of the evaluation metric computed on a hold-out validation set**,
-**AND MOST IMPORTANTLY SAVE PREDICTIONS ON THE PROVIDED UNLABELED TEST DATA IN A `submission.csv` FILE IN THE ./submission/ DIRECTORY.**
-The code should be a single-file python program that is self-contained and can be executed as-is.
-No parts of the code should be skipped, don't terminate the before finishing the script.
-Your response should only contain a single code block.
-Be aware of the running time of the code, it should complete within {EXEC_TIMEOUT}.
-All the provided input data is stored in "./input" directory.
-**You MUST submit predictions on the provided unlabeled test data in a `submission.csv` file** file in the "./working" directory as described in the task description** This is extremely important since this file is used for grading/evaluation. DO NOT FORGET THE submission.csv file!
-You can also use the "./working" directory to store any temporary files that your code needs to create.
-REMEMBER THE ./submission/submission.csv FILE!!!!! The correct directory is important too.
+Your script must  
+1. **implement the proposed trajectory-design algorithm**,  
+2. **print the value of any internal objective estimate (e.g., mass delivered or surrogate J)**, and  
+3. **MOST IMPORTANTLY write a valid solution text file to ./submission/solution.txt (or ./working/solution.txt) in the exact format described in GTOC12_Submission_Format.pdf.**  
+After writing, invoke `http://localhost:5000/validate` to verify validity and print the validator’s message.  
+Provide a single, self-contained Python file; do not terminate early. Keep runtime under {EXEC_TIMEOUT}.  
+All input data (asteroid list, constants, bonus coefficients, etc.) resides in `/home/data`.  
+Remember: **the grader looks for ./submission/solution.txt** – do not forget this file!
+
+[IMPL_GUIDELINE_APPEND_PREDICT]
+Include a `build_solution()` or `predict()` function that, given the data paths, returns the in-memory representation of the full trajectory set and writes the submission file. Document the signature clearly.
+
+[IMPL_GUIDELINE_APPEND_KFOLD]
+(Not applicable – trajectory design is not evaluated with k-fold CV.)  ← keep for consistency but note irrelevance.
+
+[SOLUTION_SKETCH_GUIDELINE]
+Your initial plan should be simple, without global optimisation meta-heuristics or multi-fidelity ensembles.  
+Describe, in 3-5 sentences, a baseline method (e.g., single ship to one easy asteroid, simple Lambert launch, impulsive legs approximating low-thrust, heuristic thrust arcs).  
+Propose how you will approximate the merit function J offline.  
+No EDA required; data is already prepared in `./input`.
+
+[SOLUTION_IMPROVEMENT_SKETCH_GUIDELINE]
+Write 3-5 sentences proposing **one concrete, atomic upgrade** (e.g., replace impulsive approximation with Sims-Flanagan direct collocation; add Earth-Venus-Earth GA sequence search; increase number of miners) and explain why it should raise J.
+
+[BUGFIX_IMPROVEMENT_SKETCH_GUIDELINE]
+In 3-5 sentences, explain exactly how to fix the identified issue (e.g., time-unit mix-up, thrust-direction indexing, wrong file path) and why the fix restores validator success. No EDA.
 
 [ENV_PKGS]
 numpy
+scipy
 pandas
-scikit-learn
-statsmodels
-xgboost
-lightGBM
-torch
-torchvision
-torch-geometric
-bayesian-optimization
-timm
+matplotlib
+plotly
+TudatPy (v0.9.0)
+- Purpose: TudatPy is the Python interface to the TU Delft Astrodynamics (Tudat) library, which provides a comprehensive set of tools for astrodynamics, mission design, and trajectory optimization.
+- Core Features:  
+    - High-precision ephemerides for planets and small bodies.
+    - Low-thrust trajectory propagation, gravity assists, and optimization tools for mission planning.
+    - Integrates with PyGMO for global optimization tasks.
+- Key Modules:  
+    - tudatpy.kernel for orbital dynamics and ephemerides.
+    - tudatpy.astro for orbital mechanics and mission planning.
+- Use in GTOC-12: Utilized for generating high-accuracy ephemerides (planetary and small body states) and propagating low-thrust spacecraft trajectories, including gravity assist maneuvers.
+
+PyKEP (v2.6)
+- Purpose: PyKEP is a Python library for astrodynamics, particularly designed for low-thrust trajectory optimization and interplanetary mission analysis.
+- Core Features:  
+    - Orbit propagation using N-body methods and low-thrust propulsion (ideal for missions with electric propulsion).
+    - Support for gravity assists, interplanetary transfers, and the patched-conic approximation.
+    - Provides tools for trajectory optimization and NLP problems.
+- Use in GTOC-12: Used for trajectory propagation and optimization, particularly in the context of interplanetary transfers with low-thrust propulsion.
+
+Poliastro
+- Purpose: Poliastro is a Python library for orbital mechanics with tools for mission analysis and optimization.
+- Core Features:  
+    - Orbit propagation (Keplerian, Hohmann, bi-impulsive, patched-conic).
+    - Ephemerides and orbital plotting.
+    - Optimization tools for mission planning, including low-thrust propulsion.
+- Use in GTOC-12: Poliastro can be used to calculate trajectory propagation, including basic low-thrust arcs, rendezvous, and gravity assists.
+
+Astropy
+- Purpose: Astropy is a core library for astronomy in Python, providing a collection of utilities for handling coordinates, time, ephemerides, and astronomy-related units.
+- Core Features:  
+    - Coordinate transformations (e.g., J2000, ECI, ECLIPTIC).
+    - Handling of time (Julian Date, MJD, time conversions).
+    - Astrophysical constants, and utilities for working with units.
+- Use in GTOC-12: Primarily used for time and coordinate transformations (such as converting between heliocentric ecliptic Cartesian frames and other coordinate systems).
+
+Skyfield
+- Purpose: Skyfield is a Python library for high-precision astronomy and orbital mechanics.
+- Core Features:  
+    - High-precision ephemerides for solar system bodies and small objects, like asteroids and comets.
+    - Time and position computations for satellites, planets, and other solar system objects.
+    - Integrates with SPICE for ephemeris data.
+- Use in GTOC-12: Skyfield is useful for computing high-accuracy ephemerides for all the planetary bodies involved in the mission (Earth, Venus, Mars), and for small-body propagation.
+
+CasADi (v3.7.0)
+- Purpose: CasADi is a symbolic framework for automatic differentiation and nonlinear optimization.
+- Core Features:  
+    - Provides symbolic differentiation for trajectory optimization and dynamic simulations.
+    - Includes nonlinear solvers for optimal control problems (NLP), path planning, and trajectory optimization.
+    - Integration with advanced solvers like IPOPT, SNOPT, and global optimizers.
+- Use in GTOC-12: CasADi will be instrumental for solving the trajectory optimization problem by computing gradients and sensitivities for low-thrust trajectory arcs and assisting in the optimization of mission parameters.
+
+PyGMO (v2.19.5)
+- Purpose: PyGMO (Parallel Global Multi-objective Optimizer) is a global optimization framework that supports parallelized population-based methods for solving multi-objective problems.
+- Core Features:  
+    - Implements evolutionary algorithms, genetic algorithms, and particle swarm optimization (PSO).
+    - Handles both continuous and combinatorial optimization problems.
+    - Provides tools for multi-objective optimization and constraint handling.
+- Use in GTOC-12: PyGMO is ideal for solving the combinatorial aspects of the optimization (e.g., sequencing asteroid visits), and can be integrated into the optimization pipeline for global trajectory searches.
+
+SpiceyPy (v6.0.0)
+- Purpose: SpiceyPy is a Python wrapper for the SPICE Toolkit developed by NASA’s NAIF. It provides access to planetary ephemerides, and tools for coordinate transformations and spacecraft trajectory modeling.
+- Core Features:  
+    - High-precision ephemerides from JPL’s SPICE kernels (for planets, moons, asteroids, and spacecraft).
+    - Support for coordinate frame transformations, time conversions, and spacecraft geometry.
+    - Position and velocity calculations for planets and small bodies.
+- Use in GTOC-12: SpiceyPy will be used to retrieve high-accuracy ephemerides for Earth, Venus, Mars, and asteroids, along with computing planetary flybys and gravitational assists.
+
+Dymos (v1.13.1)
+- Purpose: Dymos is a Python-based optimal control framework built on OpenMDAO for simulating and optimizing spacecraft trajectories.
+- Core Features:  
+    - Provides tools for pseudospectral optimization and direct collocation methods.
+    - Supports low-thrust propulsion and multiphase trajectory optimization.
+    - Can be used for spacecraft trajectory modeling and optimization problems.
+- Use in GTOC-12: Dymos will be used for trajectory optimization, including low-thrust arcs, gravity assists, and multi-phase mission optimization (e.g., asteroid rendezvous, planetary flybys).
+
+JAX (v0.6.1)
+- Purpose: JAX is a numerical computing library for automatic differentiation, vectorization, and JIT compilation.
+- Core Features:  
+    - Provides automatic differentiation (both forward and reverse mode).
+    - Supports parallel computing and GPU acceleration (via JIT compilation).
+    - Handles large-scale matrix and vector computations.
+- Use in GTOC-12: JAX can be used to automatically differentiate trajectory models and optimization routines, allowing for efficient gradient-based optimization of low-thrust and gravity-assist trajectories.
+
+
 
 [ENV_PROMPT]
-Your solution can use any relevant machine learning packages such as: {PKG_LIST}. Feel free to use any other packages too (all packages are already installed!). For neural networks we suggest using PyTorch rather than TensorFlow.
+Your solution may leverage any astrodynamics or optimisation packages such as: {PKG_LIST}. All listed libraries are pre-installed. Prefer PyKep + PyGMO for fast Lambert and global search, or CasADi/ASSET for low-thrust optimal control.
 
 [RESPONSE_FORMAT]
-Your response should be a brief outline/sketch of your proposed solution in natural language (3-5 sentences), followed by a single markdown code block (wrapped in ```) which implements this solution and prints out the evaluation metric. There should be no additional headings or text in your response. Just natural language text followed by a newline and then the markdown code block.
-
-[IMPL_GUIDELINE_APPEND_PREDICT]
-The implementation should include a predict() function, allowing users to seamlessly reuse the code to make predictions on new data. The prediction function should be well-documented, especially the function signature.
-
-[IMPL_GUIDELINE_APPEND_KFOLD]
-The evaluation should be based on {K_FOLD}-fold cross-validation but only if that's an appropriate evaluation for the task at hand.
-
-[SOLUTION_SKETCH_GUIDELINE]
-This first solution design should be relatively simple, without ensembling or hyper-parameter optimization.
-Take the Memory section into consideration when proposing the design, don't propose the same modelling solution but keep the evaluation the same.
-The solution sketch should be 3-5 sentences.
-Propose an evaluation metric that is reasonable for this task.
-Don't suggest to do EDA.
-The data is already prepared and available in the `./input` directory. There is no need to unzip any files.
-
-[SOLUTION_IMPROVEMENT_SKETCH_GUIDELINE]
-The solution sketch should be a brief natural language description of how the previous solution can be improved.
-You should be very specific and should only propose a single actionable improvement.
-This improvement should be atomic so that we can experimentally evaluate the effect of the proposed change.
-Take the Memory section into consideration when proposing the improvement.
-The solution sketch should be 3-5 sentences.
-Don't suggest to do EDA.
-
-[BUGFIX_IMPROVEMENT_SKETCH_GUIDELINE]
-You should write a brief natural language description (3-5 sentences) of how the issue in the previous implementation can be fixed.
-Don't suggest to do EDA.
+Begin with a brief 3-5-sentence outline of your solution or fix.  
+Then provide **one** markdown code block (```python … ```) containing the complete Python script.  
+No extra headings or prose after the code block.

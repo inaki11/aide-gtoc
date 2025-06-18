@@ -1,22 +1,20 @@
 [DRAFT_INTRO]
 You are an interplanetary-trajectory engineer entering the 12th Global Trajectory Optimisation Competition (GTOC-12).  
-To win, you must devise a creative plan for low-thrust, multi-asteroid mining missions, simulate them, and output a valid solution file that passes the online checker at http://localhost:5000/validate. A short task description follows.
+To win, you must devise a creative plan to maximize the total weighted mass by creating a valid solution file that passes the online checker at http://localhost:5000/validate. A short task description follows.
 
 [DRAFT_INTRO_OBFUSCATED]
 You are an expert aerospace engineer tackling an advanced trajectory-design task.  
 You must craft an innovative mission plan, implement it in Python, and produce a valid submission file that passes the provided validator. The task description is given below.
 
 [IMPROVE_INTRO]
-You are an interplanetary-trajectory engineer competing in GTOC-12.  
-Below is a previous solution that already generates a submission file. Your job is to outline a brief plan for improving its score J (total bonus-weighted mass) and then implement those improvements in Python.
+A working baseline already creates a valid file. Your job is to outline a brief plan for improving its score J (total weighted mass) and then implement those improvements in Python.
 
 [IMPROVE_INTRO_OBFUSCATED]
 You are an expert aerospace engineer. A prior trajectory solution is provided.  
 First sketch a concise plan to raise its objective value, then implement the improvement in Python.
 
-[DEBUG_INTRO]
-You are an interplanetary-trajectory engineer in GTOC-12.  
-The previous code produced an invalid or empty solution file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
+[DEBUG_INTRO] 
+The previous code produced an invalid or empty Solution.txt file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
 
 [DEBUG_INTRO_OBFUSCATED]
 You are an expert engineer. The last implementation failed validation.  
@@ -28,37 +26,39 @@ You have run your code; now examine its console output, the validator response, 
 
 [PARSE_EXEC_INTRO_OBFUSCATED]
 You are an expert engineer reviewing execution logs and results.  
-Diagnose any errors, summarise performance metrics, and note next steps.
+Diagnose any errors, identify bugs, report feasibility/score findings, and note remaining issues, summarise performance metrics, and note next steps.
 
 [IMPL_GUIDELINE]
 <TOTAL_TIME_REMAINING: {TOTAL_TIME_REMAINING}>
 <TOTAL_STEPS_REMAINING: {TOTAL_STEPS_REMAINING}>
 Your script must  
-1. **implement the proposed trajectory-design algorithm**,  
-2. **print the value of any internal objective estimate (e.g., mass delivered or surrogate J)**, and  
-3. **MOST IMPORTANTLY write a valid solution text file to ./submission/solution.txt (or ./working/solution.txt) in the exact format described in GTOC12_Submission_Format.pdf.**  
-After writing, invoke `http://localhost:5000/validate` to verify validity and print the validator’s message.  
+1. **Implement the trajectory-design algorithm** inside one Python file.
+2. Print `DELIVERED_MASS: <float>` so downstream logic can always parse the score.
+3. **MANDATORY:** write the submission file to `./submission/Solution.txt`
+   (fallback `./working/Solution.txt`) exactly following *GTOC12 Submission Format*.
+4. After writing, perform:
+      requests.post("http://localhost:5000/validate", files={"file": open(path, "rb")})
+   then print the server’s message.
+5. Keep total runtime under the allotted time limit.
+6. Use only the pre-installed libraries; no internet or extra installs are possible.
 Provide a single, self-contained Python file; do not terminate early. Keep runtime under {EXEC_TIMEOUT}.  
-All input data (asteroid list, constants, bonus coefficients, etc.) resides in `/home/data`.  
-Remember: **the grader looks for ./submission/solution.txt** – do not forget this file!
+All input data (asteroid list) resides in `/home/data`.  
+Remember: **the grader looks for ./submission/Solution.txt** – do not forget this file!
 
 [IMPL_GUIDELINE_APPEND_PREDICT]
-Include a `build_solution()` or `predict()` function that, given the data paths, returns the in-memory representation of the full trajectory set and writes the submission file. Document the signature clearly.
+(Not applicable - Total mass is obtain by running validator)
 
 [IMPL_GUIDELINE_APPEND_KFOLD]
 (Not applicable – trajectory design is not evaluated with k-fold CV.)  ← keep for consistency but note irrelevance.
 
 [SOLUTION_SKETCH_GUIDELINE]
-Your initial plan should be simple, without global optimisation meta-heuristics or multi-fidelity ensembles.  
-Describe, in 3-5 sentences, a baseline method (e.g., single ship to one easy asteroid, simple Lambert launch, impulsive legs approximating low-thrust, heuristic thrust arcs).  
-Propose how you will approximate the merit function J offline.  
-No EDA required; data is already prepared in `./input`.
+Your initial plan should be simple, write 3-5 sentences describing a minimal viable mission, a baseline method (e.g., single ship to one easy asteroid, perform no transfers, return to Earth for 0 kg delivered). purely to guarantee a valid pipeline. No global optimisation or heuristics needed at this stage.
 
 [SOLUTION_IMPROVEMENT_SKETCH_GUIDELINE]
 Write 3-5 sentences proposing **one concrete, atomic upgrade** (e.g., replace impulsive approximation with Sims-Flanagan direct collocation; add Earth-Venus-Earth GA sequence search; increase number of miners) and explain why it should raise J.
 
 [BUGFIX_IMPROVEMENT_SKETCH_GUIDELINE]
-In 3-5 sentences, explain exactly how to fix the identified issue (e.g., time-unit mix-up, thrust-direction indexing, wrong file path) and why the fix restores validator success. No EDA.
+In 3-5 sentences, explain exactly how to fix the identified issue (e.g., time-unit mix-up, thrust-direction indexing, wrong file path) and describe the fix, and state why the new code will pass validation.
 
 [ENV_PKGS]
 numpy
@@ -66,93 +66,19 @@ scipy
 pandas
 matplotlib
 plotly
-TudatPy (v0.9.0)
-- Purpose: TudatPy is the Python interface to the TU Delft Astrodynamics (Tudat) library, which provides a comprehensive set of tools for astrodynamics, mission design, and trajectory optimization.
-- Core Features:  
-    - High-precision ephemerides for planets and small bodies.
-    - Low-thrust trajectory propagation, gravity assists, and optimization tools for mission planning.
-    - Integrates with PyGMO for global optimization tasks.
-- Key Modules:  
-    - tudatpy.kernel for orbital dynamics and ephemerides.
-    - tudatpy.astro for orbital mechanics and mission planning.
-- Use in GTOC-12: Utilized for generating high-accuracy ephemerides (planetary and small body states) and propagating low-thrust spacecraft trajectories, including gravity assist maneuvers.
-
-PyKEP (v2.6)
-- Purpose: PyKEP is a Python library for astrodynamics, particularly designed for low-thrust trajectory optimization and interplanetary mission analysis.
-- Core Features:  
-    - Orbit propagation using N-body methods and low-thrust propulsion (ideal for missions with electric propulsion).
-    - Support for gravity assists, interplanetary transfers, and the patched-conic approximation.
-    - Provides tools for trajectory optimization and NLP problems.
-- Use in GTOC-12: Used for trajectory propagation and optimization, particularly in the context of interplanetary transfers with low-thrust propulsion.
-
-Poliastro
-- Purpose: Poliastro is a Python library for orbital mechanics with tools for mission analysis and optimization.
-- Core Features:  
-    - Orbit propagation (Keplerian, Hohmann, bi-impulsive, patched-conic).
-    - Ephemerides and orbital plotting.
-    - Optimization tools for mission planning, including low-thrust propulsion.
-- Use in GTOC-12: Poliastro can be used to calculate trajectory propagation, including basic low-thrust arcs, rendezvous, and gravity assists.
-
-Astropy
-- Purpose: Astropy is a core library for astronomy in Python, providing a collection of utilities for handling coordinates, time, ephemerides, and astronomy-related units.
-- Core Features:  
-    - Coordinate transformations (e.g., J2000, ECI, ECLIPTIC).
-    - Handling of time (Julian Date, MJD, time conversions).
-    - Astrophysical constants, and utilities for working with units.
-- Use in GTOC-12: Primarily used for time and coordinate transformations (such as converting between heliocentric ecliptic Cartesian frames and other coordinate systems).
-
-Skyfield
-- Purpose: Skyfield is a Python library for high-precision astronomy and orbital mechanics.
-- Core Features:  
-    - High-precision ephemerides for solar system bodies and small objects, like asteroids and comets.
-    - Time and position computations for satellites, planets, and other solar system objects.
-    - Integrates with SPICE for ephemeris data.
-- Use in GTOC-12: Skyfield is useful for computing high-accuracy ephemerides for all the planetary bodies involved in the mission (Earth, Venus, Mars), and for small-body propagation.
-
-CasADi (v3.7.0)
-- Purpose: CasADi is a symbolic framework for automatic differentiation and nonlinear optimization.
-- Core Features:  
-    - Provides symbolic differentiation for trajectory optimization and dynamic simulations.
-    - Includes nonlinear solvers for optimal control problems (NLP), path planning, and trajectory optimization.
-    - Integration with advanced solvers like IPOPT, SNOPT, and global optimizers.
-- Use in GTOC-12: CasADi will be instrumental for solving the trajectory optimization problem by computing gradients and sensitivities for low-thrust trajectory arcs and assisting in the optimization of mission parameters.
-
-PyGMO (v2.19.5)
-- Purpose: PyGMO (Parallel Global Multi-objective Optimizer) is a global optimization framework that supports parallelized population-based methods for solving multi-objective problems.
-- Core Features:  
-    - Implements evolutionary algorithms, genetic algorithms, and particle swarm optimization (PSO).
-    - Handles both continuous and combinatorial optimization problems.
-    - Provides tools for multi-objective optimization and constraint handling.
-- Use in GTOC-12: PyGMO is ideal for solving the combinatorial aspects of the optimization (e.g., sequencing asteroid visits), and can be integrated into the optimization pipeline for global trajectory searches.
-
-SpiceyPy (v6.0.0)
-- Purpose: SpiceyPy is a Python wrapper for the SPICE Toolkit developed by NASA’s NAIF. It provides access to planetary ephemerides, and tools for coordinate transformations and spacecraft trajectory modeling.
-- Core Features:  
-    - High-precision ephemerides from JPL’s SPICE kernels (for planets, moons, asteroids, and spacecraft).
-    - Support for coordinate frame transformations, time conversions, and spacecraft geometry.
-    - Position and velocity calculations for planets and small bodies.
-- Use in GTOC-12: SpiceyPy will be used to retrieve high-accuracy ephemerides for Earth, Venus, Mars, and asteroids, along with computing planetary flybys and gravitational assists.
-
-Dymos (v1.13.1)
-- Purpose: Dymos is a Python-based optimal control framework built on OpenMDAO for simulating and optimizing spacecraft trajectories.
-- Core Features:  
-    - Provides tools for pseudospectral optimization and direct collocation methods.
-    - Supports low-thrust propulsion and multiphase trajectory optimization.
-    - Can be used for spacecraft trajectory modeling and optimization problems.
-- Use in GTOC-12: Dymos will be used for trajectory optimization, including low-thrust arcs, gravity assists, and multi-phase mission optimization (e.g., asteroid rendezvous, planetary flybys).
-
-JAX (v0.6.1)
-- Purpose: JAX is a numerical computing library for automatic differentiation, vectorization, and JIT compilation.
-- Core Features:  
-    - Provides automatic differentiation (both forward and reverse mode).
-    - Supports parallel computing and GPU acceleration (via JIT compilation).
-    - Handles large-scale matrix and vector computations.
-- Use in GTOC-12: JAX can be used to automatically differentiate trajectory models and optimization routines, allowing for efficient gradient-based optimization of low-thrust and gravity-assist trajectories.
-
-
+TudatPy 0.9.0
+PyKEP 2.6
+poliastro
+astropy
+skyfield
+CasADi 3.7.0
+PyGMO 2.19.5
+SpiceyPy 6.0.0
+Dymos 1.13.1
+JAX 0.6.1
 
 [ENV_PROMPT]
-Your solution may leverage any astrodynamics or optimisation packages such as: {PKG_LIST}. All listed libraries are pre-installed. Prefer PyKep + PyGMO for fast Lambert and global search, or CasADi/ASSET for low-thrust optimal control.
+Your solution may leverage any of the installed astrodynamics/optimisation packages such as: {PKG_LIST}. All listed libraries are pre-installed. No additional packages can be installed and there is **no internet**.
 
 [RESPONSE_FORMAT]
 Begin with a brief 3-5-sentence outline of your solution or fix.  

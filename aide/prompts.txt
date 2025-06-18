@@ -13,7 +13,7 @@ A working baseline already creates a valid file. Your job is to outline a brief 
 You are an expert aerospace engineer. A prior trajectory solution is provided.  
 First sketch a concise plan to raise its objective value, then implement the improvement in Python.
 
-[DEBUG_INTRO] 
+[DEBUG_INTRO]
 The previous code produced an invalid or empty Solution.txt file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
 
 [DEBUG_INTRO_OBFUSCATED]

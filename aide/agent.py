@@ -32,10 +32,10 @@ review_func_spec = FunctionSpec(
                 "type": "boolean",
                 "description": "true if the output log shows that the execution failed or has some bug, otherwise false.",
             },
-            "has_csv_submission": {
+            "has_txt_submission": {
                 "type": "boolean",
                 "description": "true if the code saves the predictions on the test data"
-                " in a `submission.csv` file in the `./submission/` directory, otherwise false."
+                " in a `Result.txt` file in the `./submission/` directory, otherwise false."
                 " Note that the file MUST be saved in the ./submission/ directory for this to be evaluated as true."
                 " Otherwise, it should be evaluated as false."
                 " You can assume the ./submission/ directory exists and is writable.",
@@ -51,17 +51,17 @@ review_func_spec = FunctionSpec(
                 "type": "number",
                 "description": "If the code ran successfully, report the value of the validation metric. Otherwise, leave it null.",
             },
-            "lower_is_better": {
+            "higher_is_better": {
                 "type": "boolean",
-                "description": "true if the metric should be minimized (i.e. a lower metric value is better, such as with MSE), false if the metric should be maximized (i.e. a higher metric value is better, such as with accuracy).",
+                "description": "true if the metric should be maximized ",
             },
         },
         "required": [
             "is_bug",
-            "has_csv_submission",
+            "has_txt_submission",
             "summary",
             "metric",
-            "lower_is_better",
+            "higher_is_better",
         ],
     },
     description="Submit a review evaluating the output of the training script.",
@@ -367,7 +367,7 @@ class Agent:
 
         # do an extra check, to catch cases where judge fails
         has_csv_submission = (
-            self.cfg.workspace_dir / "submission" / "submission.csv"
+            self.cfg.workspace_dir / "submission" / "Result.txt"
         ).exists()
 
         node.analysis = response["summary"]
@@ -375,7 +375,7 @@ class Agent:
             response["is_bug"]
             or node.exc_type is not None
             or response["metric"] is None
-            or response["has_csv_submission"] == False
+            or response["has_txt_submission"] == False
             or has_csv_submission == False
         )
 
@@ -387,7 +387,7 @@ class Agent:
         else:
             logger.info(f"Parsed results: Node {node.id} is not buggy")
             node.metric = MetricValue(
-                response["metric"], maximize=not response["lower_is_better"]
+                response["metric"], maximize=not response["higher_is_better"]
             )
 
         return node

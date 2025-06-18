@@ -14,7 +14,7 @@ You are an expert aerospace engineer. A prior trajectory solution is provided.
 First sketch a concise plan to raise its objective value, then implement the improvement in Python.
 
 [DEBUG_INTRO]
-The previous code produced an invalid or empty Solution.txt file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
+The previous code produced an invalid or empty Result.txt file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
 
 [DEBUG_INTRO_OBFUSCATED]
 You are an expert engineer. The last implementation failed validation.  
@@ -34,8 +34,8 @@ Diagnose any errors, identify bugs, report feasibility/score findings, and note 
 Your script must  
 1. **Implement the trajectory-design algorithm** inside one Python file.
 2. Print `DELIVERED_MASS: <float>` so downstream logic can always parse the score.
-3. **MANDATORY:** write the submission file to `./submission/Solution.txt`
-   (fallback `./working/Solution.txt`) exactly following *GTOC12 Submission Format*.
+3. **MANDATORY:** write the submission file to `./submission/Result.txt`
+   (fallback `./working/Result.txt`) exactly following *GTOC12 Submission Format*.
 4. After writing, perform:
       requests.post("http://localhost:5000/validate", files={{"file": open(path, "rb")}})
    then print the server’s message.
@@ -43,7 +43,7 @@ Your script must
 6. Use only the pre-installed libraries; no internet or extra installs are possible.
 Provide a single, self-contained Python file; do not terminate early. Keep runtime under {EXEC_TIMEOUT}.  
 All input data (asteroid list) resides in `/home/data`.  
-Remember: **the grader looks for ./submission/Solution.txt** – do not forget this file!
+Remember: **the grader looks for ./submission/Result.txt** – do not forget this file!
 
 [IMPL_GUIDELINE_APPEND_PREDICT]
 (Not applicable - Total mass is obtain by running validator)

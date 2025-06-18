@@ -37,7 +37,7 @@ Your script must
 3. **MANDATORY:** write the submission file to `./submission/Solution.txt`
    (fallback `./working/Solution.txt`) exactly following *GTOC12 Submission Format*.
 4. After writing, perform:
-      requests.post("http://localhost:5000/validate", files={"file": open(path, "rb")})
+      requests.post("http://localhost:5000/validate", files={{"file": open(path, "rb")}})
    then print the server’s message.
 5. Keep total runtime under the allotted time limit.
 6. Use only the pre-installed libraries; no internet or extra installs are possible.

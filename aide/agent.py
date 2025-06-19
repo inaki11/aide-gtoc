@@ -44,7 +44,7 @@ review_func_spec = FunctionSpec(
                 "type": "string",
                 "description": "write a short summary (2-3 sentences) describing "
                 " the empirical findings. Alternatively mention if there is a bug or"
-                " the submission.csv was not properly produced."
+                " the Result.txt was not properly produced."
                 " DO NOT suggest fixes or improvements.",
             },
             "metric": {
@@ -298,15 +298,15 @@ class Agent:
         )
         # handle final cases where we missed buggy nodes somehow
         if not result_node.is_buggy:
-            if not (self.cfg.workspace_dir / "submission" / "submission.csv").exists():
+            if not (self.cfg.workspace_dir / "submission" / "Result.txt").exists():
                 result_node.is_buggy = True
                 result_node.metric = WorstMetricValue()
                 logger.info(
-                    f"Actually, node {result_node.id} did not produce a submission.csv"
+                    f"Actually, node {result_node.id} did not produce a Result.txt"
                 )
         self.journal.append(result_node)
 
-        # if the result_node is the best node, cache its submission.csv and solution.py
+        # if the result_node is the best node, cache its Result.txt and solution.py
         # to best_solution/ by copying it there
         best_node = self.journal.get_best_node()
         if best_node is not None:
@@ -314,11 +314,11 @@ class Agent:
                 logger.info(f"Node {result_node.id} is the best node so far")
                 best_solution_dir = self.cfg.workspace_dir / "best_solution"
                 best_solution_dir.mkdir(exist_ok=True, parents=True)
-                # copy submission/submission.csv to best_submission/submission.csv
+                # copy submission/Result.txt to best_submission/Result.txt
                 best_submission_dir = self.cfg.workspace_dir / "best_submission"
                 best_submission_dir.mkdir(exist_ok=True, parents=True)
                 shutil.copy(
-                    self.cfg.workspace_dir / "submission" / "submission.csv",
+                    self.cfg.workspace_dir / "submission" / "Result.txt",
                     best_submission_dir,
                 )
                 # copy solution.py and relevant node id to best_solution/
@@ -366,7 +366,7 @@ class Agent:
             response["metric"] = None
 
         # do an extra check, to catch cases where judge fails
-        has_csv_submission = (
+        has_result_submission = (
             self.cfg.workspace_dir / "submission" / "Result.txt"
         ).exists()
 
@@ -376,12 +376,12 @@ class Agent:
             or node.exc_type is not None
             or response["metric"] is None
             or response["has_txt_submission"] == False
-            or has_csv_submission == False
+            or has_result_submission == False
         )
 
         if node.is_buggy:
             logger.info(
-                f"Parsed results: Node {node.id} is buggy and/or did not produce a submission.csv"
+                f"Parsed results: Node {node.id} is buggy and/or did not produce a Result.txt"
             )
             node.metric = WorstMetricValue()
         else:

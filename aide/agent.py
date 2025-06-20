@@ -360,6 +360,7 @@ class Agent:
                 convert_system_to_user=self.acfg.convert_system_to_user,
             ),
         )
+        logger.info(f"Agent received LLM functions response: {response}")
 
         # if the metric isn't a float then fill the metric with the worst metric
         if not isinstance(response["metric"], float):

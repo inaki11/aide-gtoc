@@ -180,6 +180,13 @@ class Agent:
             code = extract_code(completion_text)
             nl_text = extract_text_up_to_code(completion_text)
 
+            logger.debug(f"Extracted code length: {len(code) if code else 0}")
+            logger.debug(f"Extracted code content: {repr(code)}")
+            logger.debug(f"Extracted nl_text length: {len(nl_text) if nl_text else 0}")
+            logger.debug(f"Extracted nl_text content: {repr(nl_text)}")
+            logger.debug(f"Original completion_text length: {len(completion_text)}")
+            logger.debug(f"Original completion_text preview: {repr(completion_text[:500])}")
+
             if code and nl_text:
                 # merge all code blocks into a single string
                 return nl_text, code

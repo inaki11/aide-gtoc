@@ -56,8 +56,6 @@ def trim_long_string(string, threshold=5100, k=2500):
 
 def extract_code(text):
     """Extract python code blocks from the text."""
-    logger.debug(f"Input text length: {len(text)}")
-    logger.debug(f"Input text preview: {text[:100]}...")
     parsed_codes = []
 
     # When code is in a text or python block

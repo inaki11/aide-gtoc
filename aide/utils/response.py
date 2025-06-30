@@ -4,6 +4,7 @@ import logging
 
 import black
 
+logger = logging.getLogger("aide")
 
 def wrap_code(code: str, lang="python") -> str:
     """Wraps code with three backticks."""

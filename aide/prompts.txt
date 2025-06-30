@@ -23,10 +23,19 @@ Describe how to correct it and supply a revised Python script that outputs a val
 [PARSE_EXEC_INTRO]
 You are an interplanetary-trajectory engineer.  
 You have run your code; now examine its console output, the validator response, and any produced submission file. Identify bugs, report feasibility/score findings, and note remaining issues.
+You must respond using the submit_review function with exactly these 5 fields:
+- is_bug: boolean
+- has_txt_submission: boolean  
+- summary: string
+- metric: number or null
+- higher_is_better: boolean
+
+Do not include any other fields or malformed keys.
 
 [PARSE_EXEC_INTRO_OBFUSCATED]
 You are an expert engineer reviewing execution logs and results.  
 Diagnose any errors, identify bugs, report feasibility/score findings, and note remaining issues, summarise performance metrics, and note next steps.
+
 
 [IMPL_GUIDELINE]
 <TOTAL_TIME_REMAINING: {TOTAL_TIME_REMAINING}>

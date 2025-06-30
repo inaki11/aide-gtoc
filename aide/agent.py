@@ -362,6 +362,22 @@ class Agent:
         )
         logger.info(f"Agent received LLM functions response: {response}")
 
+        # Validate response format and provide defaults for missing keys
+        required_keys = ["is_bug", "has_txt_submission", "summary", "metric", "higher_is_better"]
+        for key in required_keys:
+            if key not in response:
+                logger.warning(f"Missing key '{key}' in LLM response, using default value")
+                if key == "is_bug":
+                    response[key] = True
+                elif key == "has_txt_submission":
+                    response[key] = False
+                elif key == "summary":
+                    response[key] = "LLM response format error - unable to parse summary"
+                elif key == "metric":
+                    response[key] = None
+                elif key == "higher_is_better":
+                    response[key] = False
+
         # if the metric isn't a float then fill the metric with the worst metric
         if not isinstance(response["metric"], float):
             response["metric"] = None

@@ -62,7 +62,7 @@ def extract_code(text):
 
     # When code is in a text or python block
     matches = re.findall(r"```(python)?\n*(.*?)\n*```", text, re.DOTALL)
-    for match in matches:
+    for i, match in matches:
         code_block = match[1]
         logger.debug(f"Match {i}: language='{match[0]}', code_preview='{code_block[:100]}...'")
         parsed_codes.append(code_block)

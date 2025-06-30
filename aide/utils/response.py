@@ -66,7 +66,7 @@ def extract_code(text):
         parsed_codes.append(code_block)
 
     # When the entire text is code or backticks of the code block is missing
-        if len(parsed_codes) == 0:
+    if len(parsed_codes) == 0:
         logger.debug("No matches found with first regex, trying fallback regex")
         matches = re.findall(r"^(```(python)?)?\n?(.*?)\n?(```)?$", text, re.DOTALL)
         logger.debug(f"Fallback regex found {len(matches)} matches")

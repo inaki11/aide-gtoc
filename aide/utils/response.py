@@ -54,25 +54,35 @@ def trim_long_string(string, threshold=5100, k=2500):
 
 def extract_code(text):
     """Extract python code blocks from the text."""
+    logger.debug(f"Input text length: {len(text)}")
+    logger.debug(f"Input text preview: {text[:100]}...")
     parsed_codes = []
 
     # When code is in a text or python block
     matches = re.findall(r"```(python)?\n*(.*?)\n*```", text, re.DOTALL)
     for match in matches:
         code_block = match[1]
+        logger.debug(f"Match {i}: language='{match[0]}', code_preview='{code_block[:100]}...'")
         parsed_codes.append(code_block)
 
     # When the entire text is code or backticks of the code block is missing
-    if len(parsed_codes) == 0:
+        if len(parsed_codes) == 0:
+        logger.debug("No matches found with first regex, trying fallback regex")
         matches = re.findall(r"^(```(python)?)?\n?(.*?)\n?(```)?$", text, re.DOTALL)
+        logger.debug(f"Fallback regex found {len(matches)} matches")
         if matches:
             code_block = matches[0][2]
+            logger.debug(f"Fallback match: code_preview='{code_block[:100]}...'")
             parsed_codes.append(code_block)
 
     # validate the parsed codes
     valid_code_blocks = [
         format_code(c) for c in parsed_codes if is_valid_python_script(c)
     ]
+
+    logger.debug(f"Valid code blocks: {len(valid_code_blocks)}")
+    final_code = format_code("\n\n".join(valid_code_blocks))
+    logger.debug(f"Final formatted code length: {len(final_code)}")
     return format_code("\n\n".join(valid_code_blocks))
 
 

@@ -30,9 +30,10 @@ Diagnose any errors, identify bugs, report feasibility/score findings, and note 
 
 [IMPL_GUIDELINE]
 <TOTAL_TIME_REMAINING: {TOTAL_TIME_REMAINING}>
-<TOTAL_STEPS_REMAINING: {TOTAL_STEPS_REMAINING}>
+<TOTAL_STEPS_REMAINI NG: {TOTAL_STEPS_REMAINING}>
 Your script must  
-1. **Implement the trajectory-design algorithm** inside one Python file.
+First include the plan you are going to execute in natural language, followed by a single markdown code block (wrapped in ```) which implements this solution:
+1. **Implement the trajectory-design algorithm** inside one Python block, There should be no additional headings or text in your response. Just natural language text followed by a newline and then the markdown code block..
 2. Print `DELIVERED_MASS: <float>` so downstream logic can always parse the score.
 3. **MANDATORY:** write the submission file to `./submission/Result.txt`
    (fallback `./working/Result.txt`) exactly following *GTOC12 Submission Format*.
@@ -81,6 +82,6 @@ JAX 0.6.1
 Your solution may leverage any of the installed astrodynamics/optimisation packages such as: {PKG_LIST}. All listed libraries are pre-installed. No additional packages can be installed and there is **no internet**.
 
 [RESPONSE_FORMAT]
-Begin with a brief 3-5-sentence outline of your solution or fix.  
-Then provide **one** markdown code block (```python … ```) containing the complete Python script.  
+Begin with a brief 3-5-sentence outline of your solution or fix in natural language, followed by.  
+**one** markdown code block (```python … ```) containing the complete Python script.  
 No extra headings or prose after the code block.

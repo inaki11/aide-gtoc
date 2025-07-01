@@ -56,4 +56,4 @@ agent:
   search:
     max_debug_depth: 3
     debug_prob: 0.5
-    num_drafts: 5
+    num_drafts: 2

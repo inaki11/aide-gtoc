@@ -173,7 +173,7 @@ class Agent:
                 system_message=prompt,
                 user_message=None,
                 model=self.acfg.code.model,
-                temperature=self.acfg.code.temp,
+                #temperature=self.acfg.code.temp,
                 convert_system_to_user=self.acfg.convert_system_to_user,
             )
 
@@ -356,7 +356,7 @@ class Agent:
                 user_message=None,
                 func_spec=review_func_spec,
                 model=self.acfg.feedback.model,
-                temperature=self.acfg.feedback.temp,
+                #temperature=self.acfg.feedback.temp,
                 convert_system_to_user=self.acfg.convert_system_to_user,
             ),
         )

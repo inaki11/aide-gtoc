@@ -29,7 +29,7 @@ def query(
     system_message: PromptType | None,
     user_message: PromptType | None,
     model: str,
-    temperature: float | None = None,
+    # temperature: float | None = None,
     max_tokens: int | None = None,
     func_spec: FunctionSpec | None = None,
     convert_system_to_user: bool = False,
@@ -53,7 +53,7 @@ def query(
 
     model_kwargs = model_kwargs | {
         "model": model,
-        "temperature": temperature,
+        # "temperature": temperature,
         "max_tokens": max_tokens,
     }
 

@@ -53,17 +53,13 @@ def query(
     Returns:
         OutputType: A string completion if func_spec is None, otherwise a dict with the function call details.
     """
-    # if model starts with "local-", remove the prefix for the actual model name
-    if model.startswith("local-"):
-        print("DEBUG: local model before prefix removal:", model)
-        model = model[len("local-") :]
-        print("DEBUG: local model after prefix removal:", model)
-    
+    # if model starts with "local-", remove the prefix for the actual model name    
     model_kwargs = model_kwargs | {
-        "model": model,
+        "model": model[len("local-") :] if model.startswith("local-") else model,
         # "temperature": temperature,
         "max_tokens": max_tokens,
     }
+    print("DEBUG: model_kwargs:", model_kwargs)
 
     logger.info("---Querying model---", extra={"verbose": True})
     system_message = compile_prompt_to_md(system_message) if system_message else None
@@ -76,6 +72,7 @@ def query(
         logger.info(f"function spec: {func_spec.to_dict()}", extra={"verbose": True})
 
     provider = determine_provider(model)
+    print("DEBUG: determined provider:", provider)
     query_func = provider_to_query_func[provider]
     output, req_time, in_tok_count, out_tok_count, info = query_func(
         system_message=system_message,

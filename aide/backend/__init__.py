@@ -1,5 +1,5 @@
 import logging
-from . import backend_anthropic, backend_openai, backend_openrouter, backend_gdm
+from . import backend_anthropic, backend_openai, backend_openrouter, backend_gdm, backend_local
 from .utils import FunctionSpec, OutputType, PromptType, compile_prompt_to_md
 
 logger = logging.getLogger("aide")
@@ -12,6 +12,8 @@ def determine_provider(model: str) -> str:
         return "anthropic"
     elif model.startswith("gemini-"):
         return "gdm"
+    elif model.startswith("local-"):
+        return "local"
     # all other models are handle by openrouter
     else:
         return "openrouter"
@@ -22,6 +24,7 @@ provider_to_query_func = {
     "anthropic": backend_anthropic.query,
     "gdm": backend_gdm.query,
     "openrouter": backend_openrouter.query,
+    "local": backend_local.query,
 }
 
 
@@ -50,7 +53,12 @@ def query(
     Returns:
         OutputType: A string completion if func_spec is None, otherwise a dict with the function call details.
     """
-
+    # if model starts with "local-", remove the prefix for the actual model name
+    if model.startswith("local-"):
+        print("DEBUG: local model before prefix removal:", model)
+        model = model[len("local-") :]
+        print("DEBUG: local model after prefix removal:", model)
+    
     model_kwargs = model_kwargs | {
         "model": model,
         # "temperature": temperature,

@@ -19,7 +19,10 @@ _client: openai.OpenAI = None  # type: ignore
 
 # read local server address from config.yaml
 import yaml
-with open("config.yaml", "r") as f:
+import os
+
+config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
+with open(config_path, "r") as f:
     config = yaml.safe_load(f)
     local_server_address = config.get("local_address", "http://host.docker.internal:11434/v1")
     print(f"Using local server address: {local_server_address}")

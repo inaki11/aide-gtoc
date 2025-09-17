@@ -17,6 +17,12 @@ logger = logging.getLogger("aide")
 
 _client: openai.OpenAI = None  # type: ignore
 
+# read local server address from config.yaml
+import yaml
+with open("config.yaml", "r") as f:
+    config = yaml.safe_load(f)
+    local_server_address = config.get("local_address", "http://host.docker.internal:11434/v1")
+    print(f"Using local server address: {local_server_address}")
 
 OPENAI_TIMEOUT_EXCEPTIONS = (
     openai.RateLimitError,
@@ -31,7 +37,7 @@ def _setup_openai_client():
     global _client
     # Change from OpenAI backend! Point the client to the local server.
     _client = openai.OpenAI(
-        base_url='http://localhost:11434/v1',
+        base_url=local_server_address,  # e.g., 'http://host.docker.internal:11434/v1'
         api_key='ollama',  # required, but unused
         max_retries=0,
     )

@@ -3,6 +3,7 @@
 import json
 import logging
 import time
+import os
 
 from aide.backend.utils import (
     FunctionSpec,
@@ -19,7 +20,11 @@ _client: openai.OpenAI = None  # type: ignore
 
 # read local server address from config.yaml
 import yaml
-with open("config.yaml", "r") as f:
+# this file path
+file_dir = os.path.dirname(os.path.abspath(__file__))
+print(f"Reading config from {os.path.join(file_dir, 'config.yaml')}")
+
+with open(os.path.join(file_dir, "config.yaml"), "r") as f:
     config = yaml.safe_load(f)
     local_server_address = config.get("local_address", "http://host.docker.internal:11434/v1")
     print(f"Using local server address: {local_server_address}")

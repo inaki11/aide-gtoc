@@ -1,6 +1,13 @@
 [DRAFT_INTRO]
-You are an interplanetary-trajectory engineer entering the 12th Global Trajectory Optimisation Competition (GTOC-12).  
-To win, you must devise a creative plan to maximize the total weighted mass by creating a valid solution file that passes the online checker at http://localhost:5000/validate. A short task description follows.
+You are an expert spacecraft mission designer + numerical optimizer + software engineer. Your job is to **produce a full, non-naive initial solution generation pipeline for GTOC-12**. Focus on deep thinking: first decompose the problem into subproblems, then design the program architecture focusing only on the structure of the program and the functions. Remind that all the code must be in a unique python script. 
+
+Required outputs (explicitly, in this order):
+1. **Solution Sketch** — an enumerated decomposition of the problem into 8–15 atomic subproblems (each 3-5 sentences), and a 1–2 paragraph overall strategy explaining why the chosen pipeline balances speed and optimality. Think deeply about the plan since it is the key for success.
+2. **Algorithmic Approach** — for each subproblem, propose 1–2 concrete algorithmic choices (cheap baseline + a higher-fidelity method). For each subproblem give 1 cheap baseline method and 1 higher-fidelity method (e.g., Lambert + Edelbaum baseline; Sims-Flanagan or direct collocation refinement). For each method list expected computational cost (big-O or rough runtime scaling), known failure modes, and suggested default hyperparameters.
+3. **Main code structure** — Think deeply about the functions the program will need to solve the problem. Provide **~15–25 function signatures** (name, args, returns, 1-line docstring). Finally include test code for every step of the code, using as a tiny sample dataset the first 50 asteroids from 'GTOC12_Asteroids_Data.txt' file.
+To win, you must devise a creative plan to maximize the total weighted mass by creating a valid solution file named Result.txt, this file must follow the submission format, pay attention to it since is quite challenging.
+A short task description follows.
+
 
 [DRAFT_INTRO_OBFUSCATED]
 You are an expert aerospace engineer tackling an advanced trajectory-design task.  
@@ -40,17 +47,16 @@ Diagnose any errors, identify bugs, report feasibility/score findings, and note 
 [IMPL_GUIDELINE]
 <TOTAL_TIME_REMAINING: {TOTAL_TIME_REMAINING}>
 <TOTAL_STEPS_REMAINI NG: {TOTAL_STEPS_REMAINING}>
-Your script must  
-First include the plan you are going to execute in natural language, followed by a single markdown code block (wrapped in ```) which implements this solution:
-1. **Implement the trajectory-design algorithm** inside one Python block, There should be no additional headings or text in your response. Just natural language text followed by a newline and then the markdown code block..
-2. Print `DELIVERED_MASS: <float>` so downstream logic can always parse the score.
-3. **MANDATORY:** write the submission file to `./submission/Result.txt`
+You are given a detailed plan to solve the problem, your task is to implement it on expert level python code.
+Your script must be contained on a single markdown code block (wrapped in ```) which implements the solution:
+1. **Implement the trajectory-design algorithm** inside one Python block, There should be no additional headings or text in your response. Just natural language text followed by a newline and then the markdown code block.
+2. **MANDATORY:** write the submission file to `./submission/Result.txt`
    (fallback `./working/Result.txt`) exactly following *GTOC12 Submission Format*.
-4. After writing, perform:
+3. After writing, perform:
       requests.post("http://localhost:5000/validate", files={{"file": open(path, "rb")}})
    then print the server’s message.
-5. Keep total runtime under the allotted time limit.
-6. Use only the pre-installed libraries; no internet or extra installs are possible.
+4. Keep total runtime under the allotted time limit.
+5. You can use any library you want, they are already install
 Provide a single, self-contained Python file; do not terminate early. Keep runtime under {EXEC_TIMEOUT}.  
 All input data (asteroid list) resides in `/home/data`.  
 Remember: **the grader looks for ./submission/Result.txt** – do not forget this file!
@@ -62,7 +68,7 @@ Remember: **the grader looks for ./submission/Result.txt** – do not forget thi
 (Not applicable – trajectory design is not evaluated with k-fold CV.)  ← keep for consistency but note irrelevance.
 
 [SOLUTION_SKETCH_GUIDELINE]
-Your initial plan should be simple, write 3-5 sentences describing a minimal viable mission, a baseline method (e.g., single ship to one easy asteroid, perform no transfers, return to Earth for 0 kg delivered). purely to guarantee a valid pipeline. No global optimisation or heuristics needed at this stage.
+
 
 [SOLUTION_IMPROVEMENT_SKETCH_GUIDELINE]
 Write 3-5 sentences proposing **one concrete, atomic upgrade** (e.g., replace impulsive approximation with Sims-Flanagan direct collocation; add Earth-Venus-Earth GA sequence search; increase number of miners) and explain why it should raise J.

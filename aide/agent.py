@@ -213,6 +213,7 @@ class Agent:
         plan, code = self.plan_and_code_query(prompt)
         new_node = Node(plan=plan, code=code)
         logger.info(f"Drafted new node {new_node.id}")
+        logger.info(f"DEBUG: Prompt: \n{prompt}")
         return new_node
 
     def _improve(self, parent_node: Node) -> Node:

@@ -1,12 +1,5 @@
 [DRAFT_INTRO]
-You are an expert spacecraft mission designer + numerical optimizer + software engineer. Your job is to **produce a full, non-naive initial solution generation pipeline for GTOC-12**. Focus on deep thinking: first decompose the problem into subproblems, then design the program architecture focusing only on the structure of the program and the functions. Remind that all the code must be in a unique python script. 
-
-Required outputs (explicitly, in this order):
-1. **Solution Sketch** — an enumerated decomposition of the problem into 8–15 atomic subproblems (each 3-5 sentences), and a 1–2 paragraph overall strategy explaining why the chosen pipeline balances speed and optimality. Think deeply about the plan since it is the key for success.
-2. **Algorithmic Approach** — for each subproblem, propose 1–2 concrete algorithmic choices (cheap baseline + a higher-fidelity method). For each subproblem give 1 cheap baseline method and 1 higher-fidelity method (e.g., Lambert + Edelbaum baseline; Sims-Flanagan or direct collocation refinement). For each method list expected computational cost (big-O or rough runtime scaling), known failure modes, and suggested default hyperparameters.
-3. **Main code structure** — Think deeply about the functions the program will need to solve the problem. Provide **~15–25 function signatures** (name, args, returns, 1-line docstring). Finally include test code for every step of the code, using as a tiny sample dataset the first 50 asteroids from 'GTOC12_Asteroids_Data.txt' file.
-To win, you must devise a creative plan to maximize the total weighted mass by creating a valid solution file named Result.txt, this file must follow the submission format, pay attention to it since is quite challenging.
-A short task description follows.
+You are an expert spacecraft mission designer + numerical optimizer + software engineer. Your job is to **produce a full, non-naive initial solution generation pipeline for GTOC-12**. 
 
 
 [DRAFT_INTRO_OBFUSCATED]
@@ -47,7 +40,7 @@ Diagnose any errors, identify bugs, report feasibility/score findings, and note 
 [IMPL_GUIDELINE]
 <TOTAL_TIME_REMAINING: {TOTAL_TIME_REMAINING}>
 <TOTAL_STEPS_REMAINI NG: {TOTAL_STEPS_REMAINING}>
-You are given a detailed plan to solve the problem, your task is to implement it on expert level python code.
+
 Your script must be contained on a single markdown code block (wrapped in ```) which implements the solution:
 1. **Implement the trajectory-design algorithm** inside one Python block, There should be no additional headings or text in your response. Just natural language text followed by a newline and then the markdown code block.
 2. **MANDATORY:** write the submission file to `./submission/Result.txt`
@@ -57,18 +50,24 @@ Your script must be contained on a single markdown code block (wrapped in ```) w
    then print the server’s message.
 4. Keep total runtime under the allotted time limit.
 5. You can use any library you want, they are already install
-Provide a single, self-contained Python file; do not terminate early. Keep runtime under {EXEC_TIMEOUT}.  
-All input data (asteroid list) resides in `/home/data`.  
+ All input data (asteroid list) resides in `/home/data`.  
 Remember: **the grader looks for ./submission/Result.txt** – do not forget this file!
 
 [IMPL_GUIDELINE_APPEND_PREDICT]
-(Not applicable - Total mass is obtain by running validator)
+
 
 [IMPL_GUIDELINE_APPEND_KFOLD]
-(Not applicable – trajectory design is not evaluated with k-fold CV.)  ← keep for consistency but note irrelevance.
 
 [SOLUTION_SKETCH_GUIDELINE]
-
+Focus on deep thinking: first decompose the problem into subproblems, then design the program architecture focusing only on the structure of the program and the functions. Remind that all the code must be in a unique python script. 
+Required outputs (explicitly, in this order):
+1. **Solution Sketch** — an enumerated decomposition of the problem into 8–15 atomic subproblems (each 3-5 sentences), and a 1–2 paragraph overall strategy explaining why the chosen pipeline balances speed and optimality. Think deeply about the plan since it is the key for success.
+2. **Algorithmic Approach** — for each subproblem, propose 1–2 concrete algorithmic choices (cheap baseline + a higher-fidelity method). For each subproblem give 1 cheap baseline method and 1 higher-fidelity method (e.g., Lambert + Edelbaum baseline; Sims-Flanagan or direct collocation refinement). For each method list expected computational cost (big-O or rough runtime scaling), known failure modes, and suggested default hyperparameters.
+3. **Main code structure** — Think deeply in natural language about the functions the program will need to solve the problem.
+4. **Python code block** -- Here you have to implement the plan. First you should copy all the variables and formulas given that you will need. Then code the funcions properly documented, and finally the rest of code.
+Finally include test code for every step of the code, using as a tiny sample dataset the first 50 asteroids from 'GTOC12_Asteroids_Data.txt' file.
+To win, you must devise a creative plan to maximize the total weighted mass by creating a valid solution file named Result.txt, this file must follow the submission format, pay attention to it since is quite challenging.
+A short task description follows.
 
 [SOLUTION_IMPROVEMENT_SKETCH_GUIDELINE]
 Write 3-5 sentences proposing **one concrete, atomic upgrade** (e.g., replace impulsive approximation with Sims-Flanagan direct collocation; add Earth-Venus-Earth GA sequence search; increase number of miners) and explain why it should raise J.
@@ -82,21 +81,21 @@ scipy
 pandas
 matplotlib
 plotly
-TudatPy 0.9.0
-PyKEP 2.6
+TudatPy
+PyKEP
 poliastro
 astropy
 skyfield
-CasADi 3.7.0
-PyGMO 2.19.5
-SpiceyPy 6.0.0
-Dymos 1.13.1
-JAX 0.6.1
+CasADi
+PyGMO
+SpiceyPy
+Dymos
+JAX
 
 [ENV_PROMPT]
 Your solution may leverage any of the installed astrodynamics/optimisation packages such as: {PKG_LIST}. All listed libraries are pre-installed. No additional packages can be installed and there is **no internet**.
 
 [RESPONSE_FORMAT]
-Begin with a brief 3-5-sentence outline of your solution or fix in natural language, followed by.  
-**one** markdown code block (```python … ```) containing the complete Python script.  
+Begin with a deep explanation of your solution in natural language, followed by.  
+**one** markdown code block (```python … ```) containing the complete Python script.
 No extra headings or prose after the code block.

@@ -75,7 +75,8 @@ def query(
         for message in [system_message, user_message]
         if message
     ]
-
+    # sleep 15 seconds to avoid free tier rate limits
+    time.sleep(15)
     t0 = time.time()
     response: generation_types.GenerateContentResponse = backoff_create(
         gdm_model.generate_content,

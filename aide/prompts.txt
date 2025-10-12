@@ -49,7 +49,6 @@ Your script must be contained on a single markdown code block (wrapped in ```) w
       requests.post("http://localhost:5000/validate", files={{"file": open(path, "rb")}})
    then print the server’s message.
 4. Keep total runtime under the allotted time limit.
-5. You can use any library you want, they are already install
  All input data (asteroid list) resides in `/home/data`.  
 Remember: **the grader looks for ./submission/Result.txt** – do not forget this file!
 

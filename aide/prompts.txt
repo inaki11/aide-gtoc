@@ -62,7 +62,7 @@ Focus on deep thinking: first decompose the problem into subproblems, then desig
 Required outputs (explicitly, in this order):
 1. **Solution Sketch** — an enumerated decomposition of the problem into 8–15 atomic subproblems (each 3-5 sentences), and a 1–2 paragraph overall strategy explaining why the chosen pipeline balances speed and optimality. Think deeply about the plan since it is the key for success.
 2. **Algorithmic Approach** — for each subproblem, propose 1–2 concrete algorithmic choices (cheap baseline + a higher-fidelity method). For each subproblem give 1 cheap baseline method and 1 higher-fidelity method (e.g., Lambert + Edelbaum baseline; Sims-Flanagan or direct collocation refinement). For each method list expected computational cost (big-O or rough runtime scaling), known failure modes, and suggested default hyperparameters.
-3. **Main code structure** — Think deeply in natural language about the functions the program will need to solve the problem.
+3. **code structure** — Think deeply in natural language about the functions the program will need to solve the problem.
 4. **Python code block** -- Here you have to implement the plan. First you should copy all the variables and formulas given that you will need. Then code the funcions properly documented, and finally the rest of code.
 Finally include test code for every step of the code, using as a tiny sample dataset the first 50 asteroids from 'GTOC12_Asteroids_Data.txt' file.
 To win, you must devise a creative plan to maximize the total weighted mass by creating a valid solution file named Result.txt, this file must follow the submission format, pay attention to it since is quite challenging.
@@ -97,4 +97,5 @@ Your solution may leverage any of the installed astrodynamics/optimisation packa
 [RESPONSE_FORMAT]
 Begin with a deep explanation of your solution in natural language, followed by.  
 **one** markdown code block (```python … ```) containing the complete Python script.
+The Python code must not use an if __name__ == "__main__": block; it should be written as a script that runs immediately when executed.
 No extra headings or prose after the code block.

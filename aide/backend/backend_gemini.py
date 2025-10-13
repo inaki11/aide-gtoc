@@ -71,6 +71,7 @@ def query(
             messages=messages,
             **filtered_kwargs,
         )
+        time.sleep(30)  # To avoid rate limits
     except openai.BadRequestError as e:
         # Check whether the error indicates that function calling is not supported
         if "function calling" in str(e).lower() or "tools" in str(e).lower():

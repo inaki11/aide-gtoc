@@ -53,7 +53,10 @@ def query(
     Returns:
         OutputType: A string completion if func_spec is None, otherwise a dict with the function call details.
     """
-
+    if model.startswith("local-"):
+        # for local models, strip the "local-" prefix to get the actual model name
+        model = model[len("local-"):]
+        
     model_kwargs = model_kwargs | {
         "model": model,
         "temperature": temperature,

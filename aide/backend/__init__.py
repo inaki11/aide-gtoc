@@ -1,6 +1,8 @@
 import logging
 from . import backend_anthropic, backend_openai, backend_openrouter, backend_gemini, backend_local
 from .utils import FunctionSpec, OutputType, PromptType, compile_prompt_to_md
+import os
+import re
 
 logger = logging.getLogger("aide")
 
@@ -27,15 +29,13 @@ provider_to_query_func = {
     "local": backend_local.query,
 }
 
-
 def query(
     system_message: PromptType | None,
     user_message: PromptType | None,
     model: str,
-    # temperature: float | None = None,
+    temperature: float | None = None,
     max_tokens: int | None = None,
     func_spec: FunctionSpec | None = None,
-    convert_system_to_user: bool = False,
     **model_kwargs,
 ) -> OutputType:
     """
@@ -53,35 +53,23 @@ def query(
     Returns:
         OutputType: A string completion if func_spec is None, otherwise a dict with the function call details.
     """
-    # if model starts with "local-", remove the prefix for the actual model name    
+
     model_kwargs = model_kwargs | {
-        "model": model[len("local-") :] if model.startswith("local-") else model,
-        # "temperature": temperature,
+        "model": model,
+        "temperature": temperature,
         "max_tokens": max_tokens,
     }
     print("DEBUG: model_kwargs:", model_kwargs)
-
-    logger.info("---Querying model---", extra={"verbose": True})
-    system_message = compile_prompt_to_md(system_message) if system_message else None
-    if system_message:
-        logger.info(f"system: {system_message}", extra={"verbose": True})
-    user_message = compile_prompt_to_md(user_message) if user_message else None
-    if user_message:
-        logger.info(f"user: {user_message}", extra={"verbose": True})
-    if func_spec:
-        logger.info(f"function spec: {func_spec.to_dict()}", extra={"verbose": True})
 
     provider = determine_provider(model)
     print("DEBUG: determined provider:", provider)
     query_func = provider_to_query_func[provider]
     output, req_time, in_tok_count, out_tok_count, info = query_func(
-        system_message=system_message,
-        user_message=user_message,
+        system_message=compile_prompt_to_md(system_message) if system_message else None,
+        user_message=compile_prompt_to_md(user_message) if user_message else None,
         func_spec=func_spec,
-        convert_system_to_user=convert_system_to_user,
         **model_kwargs,
     )
     logger.info(f"response: {output}", extra={"verbose": True})
     logger.info(f"---Query complete---", extra={"verbose": True})
-
     return output

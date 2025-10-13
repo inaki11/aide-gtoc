@@ -1,15 +1,15 @@
-import logging
 from dataclasses import dataclass
-from typing import Callable
 
 import jsonschema
 from dataclasses_json import DataClassJsonMixin
+import backoff
+import logging
+from typing import Callable
 
 PromptType = str | dict | list
 FunctionCallType = dict
 OutputType = str | FunctionCallType
 
-import backoff
 
 logger = logging.getLogger("aide")
 
@@ -30,16 +30,11 @@ def backoff_create(
 
 
 def opt_messages_to_list(
-    system_message: str | None,
-    user_message: str | None,
-    convert_system_to_user: bool = False,
+    system_message: str | None, user_message: str | None
 ) -> list[dict[str, str]]:
     messages = []
     if system_message:
-        if convert_system_to_user:
-            messages.append({"role": "user", "content": system_message})
-        else:
-            messages.append({"role": "system", "content": system_message})
+        messages.append({"role": "system", "content": system_message})
     if user_message:
         messages.append({"role": "user", "content": user_message})
     return messages
@@ -71,6 +66,7 @@ class FunctionSpec(DataClassJsonMixin):
 
     @property
     def as_openai_tool_dict(self):
+        """Convert to OpenAI's function format."""
         return {
             "type": "function",
             "function": {
@@ -78,7 +74,6 @@ class FunctionSpec(DataClassJsonMixin):
                 "description": self.description,
                 "parameters": self.json_schema,
             },
-            "strict": True,
         }
 
     @property
@@ -86,4 +81,39 @@ class FunctionSpec(DataClassJsonMixin):
         return {
             "type": "function",
             "function": {"name": self.name},
+        }
+
+    @property
+    def as_anthropic_tool_dict(self):
+        """Convert to Anthropic's tool format."""
+        return {
+            "name": self.name,
+            "description": self.description,
+            "input_schema": self.json_schema,  # Anthropic uses input_schema instead of parameters
+        }
+
+    @property
+    def anthropic_tool_choice_dict(self):
+        """Convert to Anthropic's tool choice format."""
+        return {
+            "type": "tool",  # Anthropic uses "tool" instead of "function"
+            "name": self.name,
+        }
+
+    @property
+    def as_openai_responses_tool_dict(self):
+        """Convert to OpenAI Responses API tool format."""
+        return {
+            "type": "function",
+            "name": self.name,
+            "description": self.description,
+            "parameters": self.json_schema,
+        }
+
+    @property
+    def openai_responses_tool_choice_dict(self):
+        """Convert to OpenAI Responses API tool choice format."""
+        return {
+            "type": "function",
+            "name": self.name,
         }

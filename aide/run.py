@@ -159,6 +159,8 @@ def run():
 
     def exec_callback(*args, **kwargs):
         status.update("[magenta]Executing code...")
+        # set __name__ to __main__ so if llm generated code has if __name__ == "__main__" then will run
+        kwargs.setdefault("globals", {"__name__": "__main__"})
         res = interpreter.run(*args, **kwargs)
         status.update("[green]Generating code...")
         return res

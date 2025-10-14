@@ -159,11 +159,60 @@ def run():
 
     def exec_callback(*args, **kwargs):
         status.update("[magenta]Executing code...")
-        # set __name__ to __main__ so if llm generated code has if __name__ == "__main__" then will run
-        kwargs.setdefault("globals", {"__name__": "__main__"})
-        res = interpreter.run(*args, **kwargs)
+        # ensure_main_is_called modifies the code if find 'if __name__ == "__main__":' to force call to main()
+        original_code = args[0]
+        modified_code = ensure_main_is_called(original_code)
+        modified_args = (modified_code,) + args[1:]
+        res = interpreter.run(*modified_args, **kwargs)
         status.update("[green]Generating code...")
         return res
+    
+    def ensure_main_is_called(code: str) -> str:
+        """
+        Checks if the code defines a main() function and doesn't call it directly.
+        If so, it appends a call to main() after the definition.
+        It removes the if __name__ == "__main__": block if present to force execution.
+        """
+        lines = code.splitlines()
+        modified_lines = []
+        in_main_block = False
+        main_defined = False
+
+        for line in lines:
+            if line.strip().startswith("def main("):
+                main_defined = True
+            
+            # Check for the start of the typical main protection block
+            if line.strip() == 'if __name__ == "__main__":':
+                in_main_block = True
+                continue # Skip adding this line
+            
+            # Check for subsequent lines inside the main block
+            if in_main_block and (line.startswith(' ') or line.startswith('\t')):
+                # If the line is an indented line (part of the block) and calls main(), skip it
+                if line.strip() == "main()":
+                    continue 
+                # If it's another line inside the block, keep it but de-indent it
+                modified_lines.append(line.lstrip())
+                continue
+            
+            # If we exit the main block protection
+            if in_main_block and not (line.startswith(' ') or line.startswith('\t')):
+                in_main_block = False
+            
+            # Add the line if not inside the skipped block
+            if not in_main_block:
+                modified_lines.append(line)
+
+        # Re-assemble the code
+        modified_code = "\n".join(modified_lines)
+
+        # If 'main' was defined but we didn't force its call (e.g., if it was in the block we stripped),
+        # ensure a call to main() is at the end.
+        if main_defined and not modified_code.strip().endswith("main()"):
+            modified_code += "\n\nmain()\n"
+            
+        return modified_code
 
     def generate_live():
         tree = journal_to_rich_tree(journal)

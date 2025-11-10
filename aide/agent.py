@@ -264,11 +264,9 @@ class Agent:
         if self.acfg.data_preview:
             prompt["Data Overview"] = self.data_preview
 
-        logger.info(f"--------------  INICIO DEBUG PROMPT  -------------------: \n\n {prompt} \n\n--------------  FIN DEBUG PROMPT  -------------------")  
+        logger.info(f"DEBUG: DRAFT EXEC OUTPUT:\n {parent_node.term_out} \n {wrap_code(parent_node.term_out, lang='')} \n")
 
         plan, code = self.plan_and_code_query(prompt)
-        logger.info(f"--------------  INICIO DEBUG PLAN  -------------------: \n\n {plan} \n\n--------------  FIN DEBUG PLAN  -------------------")
-        logger.info(f"--------------  INICIO DEBUG CODE  -------------------: \n\n {code} \n\n--------------  FIN DEBUG CODE  -------------------")
 
         new_node = Node(plan=plan, code=code, parent=parent_node)
         logger.info(f"Debugged node {parent_node.id} to create new node {new_node.id}")
@@ -353,6 +351,7 @@ class Agent:
             "Implementation": wrap_code(node.code),
             "Execution output": wrap_code(node.term_out, lang=""),
         }
+        logger.info(f"DEBUG: PARSE EXEC EXEC OUTPUT:\n {node.term_out} \n {wrap_code(node.term_out, lang='')} \n")
 
         response = cast(
             dict,

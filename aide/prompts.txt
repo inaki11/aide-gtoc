@@ -83,3 +83,17 @@ Begin with a deep explanation of your solution in natural language, followed by.
 **one** markdown code block (```python … ```) containing the complete Python script.
 The Python code must not use an if __name__ == "__main__": block; it should be written as a script that runs immediately when executed.
 No extra headings or prose after the code block.
+
+
+
+[IMPL_GUIDELINE_APPEND_KFOLD]
+
+[IMPL_GUIDELINE_APPEND_PREDICT]
+
+[PARSE_EXEC_INTRO_OBFUSCATED]
+
+[DRAFT_INTRO_OBFUSCATED]
+
+[IMPROVE_INTRO_OBFUSCATED]
+
+[DEBUG_INTRO_OBFUSCATED]

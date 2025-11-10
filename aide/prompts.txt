@@ -1,24 +1,11 @@
 [DRAFT_INTRO]
 You are an expert spacecraft mission designer + numerical optimizer + software engineer. Your job is to **produce a full, non-naive initial solution generation pipeline for GTOC-12**. 
 
-
-[DRAFT_INTRO_OBFUSCATED]
-You are an expert aerospace engineer tackling an advanced trajectory-design task.  
-You must craft an innovative mission plan, implement it in Python, and produce a valid submission file that passes the provided validator. The task description is given below.
-
 [IMPROVE_INTRO]
 A working baseline already creates a valid file. Your job is to outline a brief plan for improving its score J (total weighted mass) and then implement those improvements in Python.
 
-[IMPROVE_INTRO_OBFUSCATED]
-You are an expert aerospace engineer. A prior trajectory solution is provided.  
-First sketch a concise plan to raise its objective value, then implement the improvement in Python.
-
 [DEBUG_INTRO]
-The previous code produced an invalid or empty Result.txt file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
-
-[DEBUG_INTRO_OBFUSCATED]
-You are an expert engineer. The last implementation failed validation.  
-Describe how to correct it and supply a revised Python script that outputs a valid submission file.
+The previous code produced an invalid execution, or an invalid/empty Result.txt file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
 
 [PARSE_EXEC_INTRO]
 You are an interplanetary-trajectory engineer.  
@@ -31,10 +18,6 @@ You must respond using the submit_review function with exactly these 5 fields:
 - higher_is_better: boolean
 
 Do not include any other fields or malformed keys.
-
-[PARSE_EXEC_INTRO_OBFUSCATED]
-You are an expert engineer reviewing execution logs and results.  
-Diagnose any errors, identify bugs, report feasibility/score findings, and note remaining issues, summarise performance metrics, and note next steps.
 
 
 [IMPL_GUIDELINE]
@@ -52,10 +35,6 @@ Your script must be contained on a single markdown code block (wrapped in ```) w
  All input data (asteroid list) resides in `/home/data`.  
 Remember: **the grader looks for ./submission/Result.txt** – do not forget this file!
 
-[IMPL_GUIDELINE_APPEND_PREDICT]
-
-
-[IMPL_GUIDELINE_APPEND_KFOLD]
 
 [SOLUTION_SKETCH_GUIDELINE]
 Focus on deep thinking: first decompose the problem into subproblems, then design the program architecture focusing only on the structure of the program and the functions. Remind that all the code must be in a unique python script. 
@@ -72,7 +51,12 @@ A short task description follows.
 Write 3-5 sentences proposing **one concrete, atomic upgrade** (e.g., replace impulsive approximation with Sims-Flanagan direct collocation; add Earth-Venus-Earth GA sequence search; increase number of miners) and explain why it should raise J.
 
 [BUGFIX_IMPROVEMENT_SKETCH_GUIDELINE]
-In 3-5 sentences, explain exactly how to fix the identified issue (e.g., time-unit mix-up, thrust-direction indexing, wrong file path) and describe the fix, and state why the new code will pass validation.
+In 3-5 sentences, explain exactly how to fix the identified issue, describe the fix, and state why the new code will pass validation.
+
+[ENV_PKGS_2]
+numpy
+scipy
+pandas
 
 [ENV_PKGS]
 numpy
@@ -92,7 +76,7 @@ Dymos
 JAX
 
 [ENV_PROMPT]
-Your solution may leverage any of the installed astrodynamics/optimisation packages such as: {PKG_LIST}. All listed libraries are pre-installed. No additional packages can be installed and there is **no internet**.
+Your solution may leverage any of the installed packages such as: {PKG_LIST}. All listed libraries are pre-installed. No additional packages can be installed and there is **no internet**.
 
 [RESPONSE_FORMAT]
 Begin with a deep explanation of your solution in natural language, followed by.  

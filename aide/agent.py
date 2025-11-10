@@ -212,7 +212,7 @@ class Agent:
         plan, code = self.plan_and_code_query(prompt)
         new_node = Node(plan=plan, code=code)
         logger.info(f"Drafted new node {new_node.id}")
-        logger.info(f"DEBUG: Prompt: \n{prompt}")
+        # logger.info(f"DEBUG: Prompt: \n{prompt}")
         return new_node
 
     def _improve(self, parent_node: Node) -> Node:
@@ -264,7 +264,12 @@ class Agent:
         if self.acfg.data_preview:
             prompt["Data Overview"] = self.data_preview
 
+        logger.info(f"--------------  INICIO DEBUG PROMPT  -------------------: \n\n {prompt} \n\n--------------  FIN DEBUG PROMPT  -------------------")  
+
         plan, code = self.plan_and_code_query(prompt)
+        logger.info(f"--------------  INICIO DEBUG PLAN  -------------------: \n\n {plan} \n\n--------------  FIN DEBUG PLAN  -------------------")
+        logger.info(f"--------------  INICIO DEBUG CODE  -------------------: \n\n {code} \n\n--------------  FIN DEBUG CODE  -------------------")
+
         new_node = Node(plan=plan, code=code, parent=parent_node)
         logger.info(f"Debugged node {parent_node.id} to create new node {new_node.id}")
         return new_node

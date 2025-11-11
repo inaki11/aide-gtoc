@@ -216,10 +216,12 @@ def get_longest_path(journal: Journal) -> list[str]:
 def filter_on_path(journal: Journal, path: list[str]) -> Journal:
     journal_copy = copy.deepcopy(journal)
     journal_copy.nodes = [n for n in journal.nodes if n.id in path]
+
+    # I comment these lines since somehow was bugging the term output from debug nodes
     # further filter nodes, setting their _term_out and exc_stack to "<OMITTED>"
-    for n in journal_copy.nodes:
-        n._term_out = "<OMITTED>"
-        n.exc_stack = "<OMITTED>"
+    # for n in journal_copy.nodes:
+    #     n._term_out = "<OMITTED>"
+    #     n.exc_stack = "<OMITTED>"
 
     return journal_copy
 

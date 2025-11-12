@@ -10,6 +10,7 @@ from funcy import notnone, once, select_values
 import openai
 
 logger = logging.getLogger("aide")
+logger.setLevel(logging.DEBUG)
 
 _client: openai.OpenAI = None  # type: ignore
 
@@ -28,7 +29,7 @@ def _setup_gemini_client():
 
     # Check for Gemini API key in environment variables
     api_key = os.getenv("GEMINI_API_KEY")
-    logger(f"gemini API KEY: {api_key}")
+    logger.info(f"gemini API KEY: {api_key}")
 
     _client = openai.OpenAI(api_key=api_key, base_url=gemini_base_url, max_retries=0)
 

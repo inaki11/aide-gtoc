@@ -43,8 +43,9 @@ Required outputs (explicitly, in this order):
 2. **Algorithmic Approach** — for each subproblem, propose 1–2 concrete algorithmic choices (cheap baseline + a higher-fidelity method). For each subproblem give 1 cheap baseline method and 1 higher-fidelity method (e.g., Lambert + Edelbaum baseline; Sims-Flanagan or direct collocation refinement). For each method list expected computational cost (big-O or rough runtime scaling), known failure modes, and suggested default hyperparameters.
 3. **code structure** — Think deeply in natural language about the functions the program will need to solve the problem.
 4. **Python code block** -- Here you have to implement the plan. First you should copy all the variables and formulas given that you will need. Then code the funcions properly documented, and finally the rest of code.
-Finally include test code for every step of the code, using as a tiny sample dataset the first 50 asteroids from 'GTOC12_Asteroids_Data.txt' file.
+Finally include test code for every step of the code, Keep in mind that the time available and computing capacity are very limited, so your strategy should seek to minimize the number of candidates and complex calculations.
 To win, you must devise a creative plan to maximize the total weighted mass by creating a valid solution file named Result.txt, this file must follow the submission format, pay attention to it since is quite challenging.
+Asteroids data can be found at /home/data/GTOC12_Asteroids_Data.txt
 A short task description follows.
 
 [SOLUTION_IMPROVEMENT_SKETCH_GUIDELINE]

@@ -28,6 +28,23 @@ from rich.tree import Tree
 from .utils.config import load_task_desc, prep_agent_workspace, save_run, load_cfg
 
 
+import json
+import os
+
+def cargar_nodo_inicial(filepath: str, node_index=0) -> Node:
+    # 1. Cargar el JSON "crudo"
+    with open(filepath, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    # 2. Extraer el diccionario del primer nodo (o el que necesites)
+    first_node_dict = data["nodes"][node_index]
+
+    # 3. Instanciar usando el método mágico from_dict de DataClassJsonMixin
+    # Esto se encargará de convertir recursivamente el campo 'metric' a objeto MetricValue
+    node = Node.from_dict(first_node_dict)
+    
+    return node
+
 class VerboseFilter(logging.Filter):
     """
     Filter (remove) logs that have verbose attribute set to True
@@ -35,6 +52,7 @@ class VerboseFilter(logging.Filter):
 
     def filter(self, record):
         return not (hasattr(record, "verbose") and record.verbose)
+
 
 
 def journal_to_rich_tree(journal: Journal):
@@ -137,6 +155,18 @@ def run():
     atexit.register(cleanup)
 
     journal = Journal()
+
+    # Si el agente está configurado en modo "REFINE" es true y existe la variable de entorno DRAFTS_FILE,
+    # cargamos el nodo inicial desde el archivo JSON especificado en DRAFTS_FILE
+    print(f"REFINE mode: {os.getenv('REFINE', 'false')}")
+    print(f"DRAFTS_FILE: {os.getenv('DRAFTS_FILE', 'not set')}")
+
+    if os.getenv('REFINE', 'false').lower() == 'true' and os.getenv('DRAFTS_FILE'):
+        drafts_file_path = os.getenv('DRAFTS_FILE')
+        logger.info(f"Cargando nodo inicial desde el archivo de borradores: {drafts_file_path}")
+        initial_node = cargar_nodo_inicial(drafts_file_path)
+        journal.append(initial_node)
+
     agent = Agent(
         task_desc=task_desc,
         cfg=cfg,

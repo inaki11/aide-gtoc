@@ -5,7 +5,7 @@ You are an expert spacecraft mission designer + numerical optimizer + software e
 A working baseline already creates a valid file. Your job is to outline a brief plan for improving its score J (total weighted mass) and then implement those improvements in Python.
 
 [DEBUG_INTRO]
-The previous code produced an invalid execution, or an invalid/empty Result.txt file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file.
+The previous code produced an invalid execution, or an invalid/empty Result.txt file (or failed validation). Using the information below, outline your fix and provide an updated Python script that generates a **valid** submission file. You MUST propose only one fix at a time, if you think there are more than one error in the code, you must fix only the most important one.
 
 [PARSE_EXEC_INTRO]
 You are an interplanetary-trajectory engineer.  

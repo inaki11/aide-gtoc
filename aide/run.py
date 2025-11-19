@@ -156,16 +156,16 @@ def run():
 
     journal = Journal()
 
-    # Si el agente está configurado en modo "REFINE" es true y existe la variable de entorno DRAFTS_FILE,
+    # Si el agente está configurado en modo "REFINE" es mayor o igual a 0 y existe la variable de entorno DRAFTS_FILE,
     # cargamos el nodo inicial desde el archivo JSON especificado en DRAFTS_FILE
-    print(f"REFINE mode: {os.getenv('REFINE', 'false')}")
-    print(f"DRAFTS_FILE: {os.getenv('DRAFTS_FILE', 'not set')}")
-
-    if os.getenv('REFINE', 'false').lower() == 'true' and os.getenv('DRAFTS_FILE'):
-        drafts_file_path = os.getenv('DRAFTS_FILE')
+    if int(os.getenv('REFINE', '-1')) >= 0 and os.getenv('DRAFTS_FILE'):
+        drafts_file_path = "/home/agent/" + os.getenv('DRAFTS_FILE')
         logger.info(f"Cargando nodo inicial desde el archivo de borradores: {drafts_file_path}")
-        initial_node = cargar_nodo_inicial(drafts_file_path)
+        refine_index = int(os.getenv('REFINE', '-1'))
+        logger.info(f"Cargando el nodo inicial con índice: {refine_index}")
+        initial_node = cargar_nodo_inicial(drafts_file_path, node_index=refine_index)
         journal.append(initial_node)
+        logger.info(f"Nodo inicial cargado, numero de drafs en el journal: {journal.draft_nodes}")
 
     agent = Agent(
         task_desc=task_desc,

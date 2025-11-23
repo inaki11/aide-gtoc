@@ -46,6 +46,9 @@ Required outputs (explicitly, in this order):
 Finally include test code for every step of the code, Keep in mind that the time available and computing capacity are very limited, so your strategy should seek to minimize the number of candidates and complex calculations.
 To win, you must devise a creative plan to maximize the total weighted mass by creating a valid solution file named Result.txt, this file must follow the submission format, pay attention to it since is quite challenging.
 Asteroids data can be found at /home/data/GTOC12_Asteroids_Data.txt
+About Result.txt format: Be careful to dont log, or to later eliminate empty lines in Result.txt, typically a last character \n at the end of the file. That will make validator crash. Always print the total number of lines in Result.txt.
+Unit Consistency: Be cautious with the units of measurement for each magnitude, as different libraries may use varying units. Establish and enforce common units for the entire simulation (time, mass, distance).
+
 A short task description follows.
 
 [SOLUTION_IMPROVEMENT_SKETCH_GUIDELINE]
@@ -53,6 +56,8 @@ Write 3-5 sentences proposing **one concrete, atomic upgrade** (e.g., replace im
 
 [BUGFIX_IMPROVEMENT_SKETCH_GUIDELINE]
 In 3-5 sentences, explain exactly how to fix the identified issue, describe the fix, and state why the new code will pass validation.
+About Result.txt format: Be careful to dont log, or to later eliminate empty lines in Result.txt, typically a last character \n at the end of the file. That will make validator crash. Always print the total number of lines in Result.txt.
+Search Strategy Stability Avoid constantly changing parameters. There is ample time to find valid candidates. If the previous run time exceeds 10 minutes and the desired error is not achieved, the error is likely not in the search size/scope.
 
 [ENV_PKGS_2]
 numpy

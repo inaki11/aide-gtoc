@@ -58,6 +58,7 @@ Write 3-5 sentences proposing **one concrete, atomic upgrade** (e.g., replace im
 In 3-5 sentences, explain exactly how to fix the identified issue, describe the fix, and state why the new code will pass validation.
 About Result.txt format: Be careful to dont log, or to later eliminate empty lines in Result.txt, typically a last character \n at the end of the file. That will make validator crash. Always print the total number of lines in Result.txt.
 Search Strategy Stability Avoid constantly changing parameters. There is ample time to find valid candidates. If the previous run time exceeds 10 minutes and the desired error is not achieved, the error is likely not in the search size/scope.
+Unit Consistency: Be cautious with the units of measurement for each magnitude, as different libraries may use varying units. Establish and enforce common units for the entire simulation (time, mass, distance).
 
 [ENV_PKGS_2]
 numpy

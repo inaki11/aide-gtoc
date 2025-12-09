@@ -56,6 +56,13 @@ def trim_long_string(string, threshold=5100, k=2500):
 
 def extract_code(text):
     """Extract python code blocks from the text."""
+    
+    # --- FIX START: Handle None input to prevent TypeError ---
+    if text is None:
+        logger.warning("extract_code received None text. Returning empty string.")
+        return ""
+    # --- FIX END ---
+
     parsed_codes = []
 
     # When code is in a text or python block
